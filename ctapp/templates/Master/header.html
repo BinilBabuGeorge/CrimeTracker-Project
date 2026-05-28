@@ -1,0 +1,308 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta content="width=device-width, initial-scale=1.0" name="viewport">
+
+  <title>Crime Tracker </title>
+  <meta content="" name="description">
+  <meta content="" name="keywords">
+
+  <!-- Favicons -->
+  <link href="{% static 'assets_admin/img/favicon.png' %}" rel="icon">
+  <link href="{% static 'assets_admin/img/apple-touch-icon.png' %}" rel="apple-touch-icon">
+
+  <!-- Google Fonts -->
+  <link href="https://fonts.gstatic.com" rel="preconnect">
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i|Nunito:300,300i,400,400i,600,600i,700,700i|Poppins:300,300i,400,400i,500,500i,600,600i,700,700i" rel="stylesheet">
+
+  <!-- Vendor CSS Files -->
+  <link href="{% static 'assets_admin/vendor/bootstrap/css/bootstrap.min.css' %}" rel="stylesheet">
+  <link href="{% static 'assets_admin/vendor/bootstrap-icons/bootstrap-icons.css' %}" rel="stylesheet">
+  <link href="{% static 'assets_admin/vendor/boxicons/css/boxicons.min.css' %}" rel="stylesheet">
+  <link href="{% static 'assets_admin/vendor/quill/quill.snow.css' %}" rel="stylesheet">
+  <link href="{% static 'assets_admin/vendor/quill/quill.bubble.css' %}" rel="stylesheet">
+  <link href="{% static 'assets_admin/vendor/remixicon/remixicon.css' %}" rel="stylesheet">
+  <link href="{% static 'assets_admin/vendor/simple-datatables/style.css' %}" rel="stylesheet">
+
+  <!-- Template Main CSS File -->
+  <link href="{% static 'assets_admin/css/style.css' %}" rel="stylesheet">
+
+  <!-- =======================================================
+  * Template Name: NiceAdmin
+  * Updated: Mar 09 2023 with Bootstrap v5.2.3
+  * Template URL: https://bootstrapmade.com/nice-admin-bootstrap-admin-html-template/
+  * Author: BootstrapMade.com
+  * License: https://bootstrapmade.com/license/
+  ======================================================== -->
+</head>
+
+<body>
+  <style>
+    .bx .bi
+    {
+      color:blue;
+      font-size: 20px;
+    }
+  </style>
+
+  <!-- ======= Header ======= -->
+  <header id="header" class="header fixed-top d-flex align-items-center">
+
+    <div class="d-flex align-items-center justify-content-between">
+      <a href="{% url 'admin_home' %}" class="logo d-flex align-items-center">
+
+        <span class="d-none d-lg-block">CrimeTracker  </span>
+      </a>
+      <i class="bi bi-list toggle-sidebar-btn"></i>
+    </div><!-- End Logo -->
+
+    <div class="search-bar">
+
+    </div><!-- End Search Bar -->
+    <nav class="header-nav ms-auto">
+      <ul class="d-flex align-items-center">
+
+        <li class="nav-item dropdown pe-3">
+
+          <a class="nav-link nav-profile d-flex align-items-center pe-0" href="#" data-bs-toggle="dropdown">
+            <img src="{% static 'assets_admin/img/profile-pic.jpg' %}" alt="Profile" class="rounded-circle">
+            <span class="d-none d-md-block dropdown-toggle ps-2">Admin</span>
+          </a><!-- End Profile Iamge Icon -->
+
+          <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow profile">
+            <li class="dropdown-header">
+              <h6>Administrator</h6>
+              <span>CrimeTracker</span>
+            </li>
+            <li>
+              <hr class="dropdown-divider">
+            </li>
+
+
+
+            <li>
+              <a class="dropdown-item d-flex align-items-center" href="{% url 'admin_logout' %}">
+                <i class="bi bi-box-arrow-right"></i>
+                <span>Sign Out</span>
+              </a>
+            </li>
+
+          </ul><!-- End Profile Dropdown Items -->
+        </li><!-- End Profile Nav -->
+
+      </ul>
+    </nav><!-- End Icons Navigation -->
+
+  </header><!-- End Header -->
+
+  <!-- ======= Sidebar ======= -->
+  <aside id="sidebar" class="sidebar">
+
+    <ul class="sidebar-nav" id="sidebar-nav">
+
+      <li class="nav-item">
+        <a class="nav-link collapsed" href="{% url 'admin_home' %}">
+          <i class="bi bi-grid"></i>
+          <span>Home</span>
+        </a>
+      </li><!-- End Dashboard Nav -->
+      <li class="nav-item">
+        <a class="nav-link collapsed" data-bs-target="#category-nav" data-bs-toggle="collapse" href="#">
+          <i class="bi bi-card-heading"></i><span>Crime Category</span><i class="bi bi-chevron-down ms-auto"></i>
+        </a>
+        <ul id="category-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
+          <li>
+            <a href="{% url 'add_category' %}">
+              <i class="bi bi-circle"></i><span>Add Category</span>
+            </a>
+          </li>
+
+
+
+        </ul>
+      </li><!-- End Components Nav -->
+      <li class="nav-item">
+        <a class="nav-link collapsed" data-bs-target="#police-nav" data-bs-toggle="collapse" href="#">
+          <i class="bi bi-house-fill"></i><span>Police Station</span><i class="bi bi-chevron-down ms-auto"></i>
+        </a>
+        <ul id="police-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
+          <li>
+            <a href="{% url 'add_police_station' %}">
+              <i class="bi bi-circle"></i><span>Add Police Station</span>
+            </a>
+          </li>
+
+          <li>
+            <a href="{% url 'list_police_station' %}">
+              <i class="bi bi-circle"></i><span>List Police Station</span>
+            </a>
+          </li>
+
+
+
+        </ul>
+      </li><!-- End Components Nav -->
+
+      <li class="nav-item">
+        <a class="nav-link collapsed" data-bs-target="#station-approval-nav" data-bs-toggle="collapse" href="#">
+          <i class="bi bi-check2-square"></i><span>Station Approvals</span><i class="bi bi-chevron-down ms-auto"></i>
+        </a>
+        <ul id="station-approval-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
+          <li>
+            <a href="{% url 'submitted_stations' %}">
+              <i class="bi bi-circle"></i><span>Submitted Stations</span>
+            </a>
+          </li>
+        </ul>
+      </li><!-- End Components Nav -->
+      <li class="nav-item">
+        <a class="nav-link collapsed" data-bs-target="#police8-nav" data-bs-toggle="collapse" href="#">
+          <i class="bi bi-grid"></i><span> Crimes</span><i class="bi bi-chevron-down ms-auto"></i>
+        </a>
+        <ul id="police8-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
+          <li>
+            <a href="{% url 'adm_panic_alerts' %}">
+              <i class="bi bi-circle"></i><span>Panic Alerts</span>
+            </a>
+          </li>
+          <li>
+            <a href="{% url 'adm_station_pending_cases' %}">
+              <i class="bi bi-circle"></i><span>Assign to Station</span>
+            </a>
+          </li>
+          <li>
+            <a href="{% url 'submitted_crimes' %}">
+              <i class="bi bi-circle"></i><span>Assign Crimes</span>
+            </a>
+          </li>
+
+          <li>
+            <a href="{% url 'assigned_crimes' %}">
+              <i class="bi bi-circle"></i><span>Assigned Crimes</span>
+            </a>
+          </li>
+
+         
+
+
+        </ul>
+      </li><!-- End Components Nav -->
+      <li class="nav-item">
+        <a class="nav-link collapsed" data-bs-target="#police9-nav" data-bs-toggle="collapse" href="#">
+          <i class="bi bi-grid"></i><span> Transfer</span><i class="bi bi-chevron-down ms-auto"></i>
+        </a>
+        <ul id="police9-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
+          <li>
+            <a href="{% url 'transfer' %}">
+              <i class="bi bi-circle"></i><span>Transfer</span>
+            </a>
+          </li>
+
+       
+         
+
+
+        </ul>
+      </li><!-- End Components Nav -->
+      <li class="nav-item">
+        <a class="nav-link collapsed" data-bs-target="#police10-nav" data-bs-toggle="collapse" href="#">
+          <i class="bi bi-grid"></i><span> Analysis</span><i class="bi bi-chevron-down ms-auto"></i>
+        </a>
+        <ul id="police10-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
+          <li>
+            <a href="{% url 'district_wise' %}">
+              <i class="bi bi-circle"></i><span>District Wise</span>
+            </a>
+          </li>
+          <li>
+            <a href="{% url 'place_wise' %}">
+              <i class="bi bi-circle"></i><span>Place Wise</span>
+            </a>
+          </li>
+
+       
+         
+
+
+        </ul>
+      </li><!-- End Components Nav -->
+      <li class="nav-item">
+        <a class="nav-link collapsed" data-bs-target="#police2-nav" data-bs-toggle="collapse" href="#">
+          <i class="bx bxs-envelope"></i><span> Feedback</span><i class="bi bi-chevron-down ms-auto"></i>
+        </a>
+        <ul id="police2-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
+          <li>
+            <a href="{% url 'view_feedback' %}">
+              <i class="bi bi-circle"></i><span>View Feedback</span>
+            </a>
+          </li>
+
+          <li>
+            <a href="{% url 'feedback_replied_list' %}">
+              <i class="bi bi-circle"></i><span>Replied</span>
+            </a>
+          </li>
+
+
+
+        </ul>
+      </li><!-- End Components Nav -->
+        <li class="nav-item">
+        <a class="nav-link collapsed" href="{% url 'users_list' %}">
+          <i class="bi bi-people-fill"></i>
+          <span>Users List</span>
+        </a>
+      </li>
+    
+   
+
+
+      <li class="nav-item">
+        <a class="nav-link collapsed" href="{% url 'admin_logout' %}">
+          <i class="bx bxs-log-out"></i>
+          <span>Logout</span>
+        </a>
+      </li>
+
+    </ul>
+
+  </aside><!-- End Sidebar-->
+
+  <main id="main" class="main">
+
+    <!-- End Page Title -->
+
+
+
+    {% block content %}{% endblock %}
+</main><!-- End #main -->
+
+<!-- ======= Footer ======= -->
+<footer id="footer" class="footer">
+  <div class="copyright">
+     <strong><span></span></strong>.
+  </div>
+
+</footer><!-- End Footer -->
+
+<a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
+
+<!-- Vendor JS Files -->
+<script src="{% static 'assets_admin/vendor/apexcharts/apexcharts.min.js' %}"></script>
+<script src="{% static 'assets_admin/vendor/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
+<script src="{% static 'assets_admin/vendor/chart.js/chart.umd.js' %}"></script>
+<script src="{% static 'assets_admin/vendor/echarts/echarts.min.js' %}"></script>
+<script src="{% static 'assets_admin/vendor/quill/quill.min.js' %}"></script>
+<script src="{% static 'assets_admin/vendor/simple-datatables/simple-datatables.js' %}"></script>
+<script src="{% static 'assets_admin/vendor/tinymce/tinymce.min.js' %}"></script>
+<script src="{% static 'assets_admin/vendor/php-email-form/validate.js' %}"></script>
+
+<!-- Template Main JS File -->
+<script src="{% static 'assets_admin/js/main.js' %}"></script>
+
+</body>
+
+</html>

@@ -1,0 +1,86 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta content="width=device-width, initial-scale=1.0" name="viewport">
+  <title>Crime Tracker</title>
+  <link href="{% static 'assets_admin/vendor/bootstrap/css/bootstrap.min.css' %}" rel="stylesheet">
+  <link href="{% static 'assets_admin/vendor/bootstrap-icons/bootstrap-icons.css' %}" rel="stylesheet">
+  <link href="{% static 'assets_admin/css/style.css' %}" rel="stylesheet">
+</head>
+<body>
+  <header id="header" class="header fixed-top d-flex align-items-center">
+    <div class="d-flex align-items-center justify-content-between">
+      <a href="{% url 'station_home' %}" class="logo d-flex align-items-center">
+        <span class="d-none d-lg-block">CrimeTracker</span>
+      </a>
+      <i class="bi bi-list toggle-sidebar-btn"></i>
+    </div>
+    <nav class="header-nav ms-auto">
+      <ul class="d-flex align-items-center">
+        <li class="nav-item dropdown pe-3">
+          <a class="nav-link nav-profile d-flex align-items-center pe-0" href="#" data-bs-toggle="dropdown">
+            <img src="{% static 'assets_admin/img/profile-pic.jpg' %}" alt="Profile" class="rounded-circle">
+            <span class="d-none d-md-block dropdown-toggle ps-2">Police Station</span>
+          </a>
+          <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow profile">
+            <li class="dropdown-header">
+              <h6>{{ station.station_name }}</h6>
+              <span>{{ station.place }}</span>
+            </li>
+            <li><hr class="dropdown-divider"></li>
+            <li>
+              <a class="dropdown-item d-flex align-items-center" href="{% url 'user_logout' %}">
+                <i class="bi bi-box-arrow-right"></i><span>Sign Out</span>
+              </a>
+            </li>
+          </ul>
+        </li>
+      </ul>
+    </nav>
+  </header>
+
+  <aside id="sidebar" class="sidebar">
+    <ul class="sidebar-nav" id="sidebar-nav">
+      <li class="nav-item">
+        <a class="nav-link collapsed" href="{% url 'station_home' %}">
+          <i class="bi bi-grid"></i><span>Home</span>
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link collapsed" href="{% url 'station_officers' %}">
+          <i class="bi bi-people"></i><span>Officers</span>
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link collapsed" href="{% url 'station_complaints' %}">
+          <i class="bi bi-journal-text"></i><span>Complaints</span>
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link collapsed" href="{% url 'station_chat_list' %}">
+          <i class="bi bi-chat-dots"></i><span>Citizen Chat</span>
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link collapsed" href="{% url 'station_panic_alerts' %}">
+          <i class="bi bi-exclamation-triangle"></i><span>Panic Alerts</span>
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link collapsed" href="{% url 'user_logout' %}">
+          <i class="bi bi-box-arrow-right"></i><span>Logout</span>
+        </a>
+      </li>
+    </ul>
+  </aside>
+
+  <main id="main" class="main">
+    {% block content %}{% endblock %}
+  </main>
+
+  <script src="{% static 'assets_admin/vendor/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
+</body>
+</html>
+

@@ -1,0 +1,133 @@
+{% extends "Master/header.html" %}
+{% block content %}
+<div class="pagetitle">
+  <h1>Panic Alerts</h1>
+</div>
+
+<section class="section" style="min-height: 500px;">
+  <div class="row">
+    {% if messages %}
+      {% for message in messages %}
+        <div class="alert alert-success">{{ message }}</div>
+      {% endfor %}
+    {% endif %}
+    <div class="col-lg-12">
+      <div class="card">
+        <div class="card-body">
+          <h5 class="card-title">Live Alerts</h5>
+
+          <div class="mb-3">
+            <div id="panic-map" style="height: 360px; border: 1px solid #dee2e6; border-radius: 8px;"></div>
+            <div class="text-muted mt-2">Click “View on Map” to focus the marker.</div>
+          </div>
+
+          <table class="table table-striped table-bordered border-primary" id="alerts-table">
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Citizen</th>
+                <th>Location</th>
+                <th>Date & Time</th>
+                <th>Status</th>
+                <th>Map</th>
+                <th>Forward</th>
+              </tr>
+            </thead>
+            <tbody id="alerts-body">
+              {% for a in alerts %}
+              <tr>
+                <td>{{ forloop.counter }}</td>
+                <td>{{ a.user.name }}<br>{{ a.user.phone_number }}</td>
+                <td>{% if a.latitude and a.longitude %}{{ a.latitude }}, {{ a.longitude }}{% else %}<span class="text-muted">Location unavailable</span>{% endif %}</td>
+                <td>{{ a.created_at|date:"M d, Y h:i A" }}</td>
+                <td>{{ a.status }}</td>
+                <td>
+                  {% if a.latitude and a.longitude %}
+                    <button
+                      type="button"
+                      class="btn btn-outline-primary btn-sm"
+                      onclick="focusPanicMap({{ a.latitude }}, {{ a.longitude }}, '{{ a.user.name|escapejs }}')"
+                    >
+                      View on Map
+                    </button>
+                  {% else %}
+                    <button type="button" class="btn btn-outline-secondary btn-sm" disabled>No Map</button>
+                  {% endif %}
+                </td>
+                <td>
+                  <a class="btn btn-primary btn-sm" href="{% url 'adm_forward_panic' a.panic_alert_id %}">Forward</a>
+                </td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+          <div class="text-muted">This page updates in real time.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<link
+  rel="stylesheet"
+  href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+  integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+  crossorigin=""
+/>
+<script
+  src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+  integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+  crossorigin=""
+></script>
+
+<script>
+  var panicMap = L.map('panic-map').setView([20.5937, 78.9629], 4); // default: India
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    maxZoom: 19,
+    attribution: '&copy; OpenStreetMap contributors'
+  }).addTo(panicMap);
+
+  var panicMarker = null;
+  function focusPanicMap(lat, lon, label) {
+    if (!lat || !lon) return;
+    var ll = [parseFloat(lat), parseFloat(lon)];
+    panicMap.setView(ll, 15);
+    if (panicMarker) {
+      panicMarker.setLatLng(ll);
+    } else {
+      panicMarker = L.marker(ll).addTo(panicMap);
+    }
+    if (label) {
+      panicMarker.bindPopup(label).openPopup();
+    }
+  }
+
+  var panicSocket = new WebSocket(
+      'ws://' + window.location.host + '/ws/panic/admin/'
+  );
+
+  panicSocket.onmessage = function(e) {
+    var data = JSON.parse(e.data);
+    var tbody = document.getElementById("alerts-body");
+    var row = document.createElement("tr");
+    var safeUser = (data.user || "").replace(/'/g, "\\'");
+    row.innerHTML =
+      "<td>*</td>" +
+      "<td>" + (data.user || "") + "<br>" + (data.phone || "") + "</td>" +
+      "<td>" + ((data.latitude && data.longitude) ? (data.latitude + ", " + data.longitude) : "Location unavailable") + "</td>" +
+      "<td>" + (data.created_at || "") + "</td>" +
+      "<td>" + (data.status || "new") + "</td>" +
+      "<td>" + ((data.latitude && data.longitude)
+        ? "<button type='button' class='btn btn-outline-primary btn-sm' onclick=\"focusPanicMap(" + data.latitude + "," + data.longitude + ",'" + safeUser + "')\">View on Map</button>"
+        : "<button type='button' class='btn btn-outline-secondary btn-sm' disabled>No Map</button>") + "</td>" +
+      "<td><a class='btn btn-primary btn-sm' href='/adm_forward_panic/" + data.id + "'>Forward</a></td>";
+    tbody.prepend(row);
+
+    // auto-focus the newest alert
+    if (data.latitude && data.longitude) {
+      focusPanicMap(data.latitude, data.longitude, data.user || "Panic Alert");
+    }
+  };
+</script>
+{% endblock %}
+

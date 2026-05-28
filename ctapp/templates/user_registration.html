@@ -1,0 +1,195 @@
+{% extends "header.html" %}
+{% load static %}
+{% block extra_head %}
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="{% static 'ctapp/css/auth_modern.css' %}">
+<style>
+  body { font-family: "Manrope", sans-serif; }
+</style>
+{% endblock %}
+{% block content %}
+<section class="auth-shell">
+  <div class="container">
+    <div class="auth-grid">
+      <aside class="auth-panel">
+        <div class="auth-panel__body">
+          <div>
+            <div class="auth-badge">Citizen Registration</div>
+            <h2>Build a verified account to report incidents with confidence.</h2>
+            <p>Your profile helps the system route complaints faster, maintain accurate records, and keep updates connected to the right citizen account.</p>
+          </div>
+          <div class="auth-highlights">
+            <div class="auth-highlight">
+              <strong>Personal case tracking</strong>
+              Follow every complaint from submission to resolution.
+            </div>
+            <div class="auth-highlight">
+              <strong>Direct communication</strong>
+              Stay connected with assigned stations from your dashboard.
+            </div>
+            <div class="auth-highlight">
+              <strong>Emergency-ready access</strong>
+              Registered users can also trigger panic alerts when needed.
+            </div>
+          </div>
+        </div>
+      </aside>
+
+      <section class="auth-card">
+        <div class="auth-card__body">
+          <div class="auth-topline">
+            <div>
+              <div class="auth-brand">CrimeTracker</div>
+              <div class="auth-kicker">Citizen Portal</div>
+            </div>
+            <a class="auth-link" href="{% url 'user_login' %}">Already have an account?</a>
+          </div>
+
+          <h2 class="auth-title">Create your citizen account</h2>
+          <p class="auth-subtitle">Fill in your profile details once so future complaints and updates are linked to you automatically.</p>
+
+          {% if messages %}
+          <div class="auth-message">
+            {% for message in messages %}
+            <div class="alert alert-success">{{ message }}</div>
+            {% endfor %}
+          </div>
+          {% endif %}
+
+          <script src="{% static 'assets/Validation/jquery-1.11.1.min.js' %}"></script>
+          <form action="{% url 'user_action' %}" method="post" id="myform" class="auth-form" enctype="multipart/form-data">
+            {% csrf_token %}
+            <div class="auth-form-grid">
+              <div class="auth-field">
+                <label for="name">Full Name</label>
+                <input type="text" id="name" placeholder="Enter your full name" class="auth-input" name="Name">
+              </div>
+              <div class="auth-field">
+                <label for="phone">Phone Number</label>
+                <input type="text" id="phone" placeholder="10-digit mobile number" class="auth-input" name="phone">
+              </div>
+              <div class="auth-field">
+                <label for="email">Email Address</label>
+                <input type="email" id="email" placeholder="Enter your email" class="auth-input" name="Email">
+              </div>
+              <div class="auth-field">
+                <label for="dob">Date of Birth</label>
+                <input type="date" id="dob" class="auth-input" name="dob" max="{{ today|date:'Y-m-d' }}">
+              </div>
+              <div class="auth-field auth-field--full">
+                <label for="address">Residential Address</label>
+                <textarea id="address" placeholder="Enter your address" class="auth-textarea" name="address"></textarea>
+              </div>
+              <div class="auth-field">
+                <label for="id_username">Username</label>
+                <input name="username" id="id_username" placeholder="Choose a username" type="text" class="auth-input">
+                <span id="cb"></span>
+              </div>
+              <div class="auth-field">
+                <label for="password1">Password</label>
+                <input type="password" placeholder="Create a password" name="password" id="password1" class="auth-input">
+              </div>
+              <div class="auth-field auth-field--full">
+                <label for="password2">Confirm Password</label>
+                <input type="password" placeholder="Re-enter your password" name="cpassword" id="password2" class="auth-input">
+                <span class="auth-helper">Use 5-15 characters. Letters, numbers, and `@ # *` are accepted.</span>
+              </div>
+            </div>
+
+            <div class="auth-actions">
+              <a class="auth-link" href="{% url 'user_login' %}">Back to login</a>
+              <button type="submit" class="auth-btn">Create Account</button>
+            </div>
+          </form>
+
+          <div class="auth-footer-note">
+            <strong>Privacy note:</strong> Your information is used to authenticate your account and connect you with complaint updates.
+          </div>
+
+          <script src="{% static 'assets/Validation/jquery_validate.js' %}"></script>
+          <script src="{% static 'assets/Validation/additional_validate.js' %}"></script>
+          <script>
+          (function ($, W, D) {
+            var JQUERY4U = {};
+            JQUERY4U.UTIL = {
+              setupFormValidation: function () {
+                $.validator.addMethod(
+                  "regex",
+                  function(value, element, regexp) {
+                    return this.optional(element) || regexp.test(value);
+                  },
+                  "Not a valid Input."
+                );
+
+                $("#myform").validate({
+                  ignore: [],
+                  rules: {
+                    Name: {
+                      required: true,
+                      regex: /^[A-Za-z ]+$/,
+                      minlength: 3
+                    },
+                    phone: {
+                      required: true,
+                      digits: true,
+                      minlength: 10,
+                      maxlength: 10,
+                      regex: /^(?:(?:\+|0{0,2})91(\s*[\-]\s*)?|[0]?)?[6789]\d{9}$/
+                    },
+                    address: {
+                      required: true,
+                      minlength: 3
+                    },
+                    dob: {
+                      required: true
+                    },
+                    Email: {
+                      required: true,
+                      regex: /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/
+                    },
+                    username: {
+                      required: true,
+                      regex: /^[A-Za-z0-9@]+$/,
+                      minlength: 5,
+                      maxlength: 15
+                    },
+                    password: {
+                      required: true,
+                      regex: /^[A-Za-z0-9@#*]+$/,
+                      minlength: 5,
+                      maxlength: 15
+                    },
+                    cpassword: {
+                      required: true,
+                      regex: /^[A-Za-z0-9@#*]+$/,
+                      minlength: 5,
+                      maxlength: 15,
+                      equalTo: "#password1"
+                    }
+                  },
+                  messages: {
+                    phone: "Please enter a valid 10 digit mobile number starting with 6, 7, 8, or 9.",
+                    username: "Please enter a valid 5-15 character username.",
+                    password: "Please enter a valid 5-15 character password.",
+                    cpassword: "Confirm password must match the password above."
+                  },
+                  submitHandler: function (form) {
+                    form.submit();
+                  }
+                });
+              }
+            };
+
+            $(D).ready(function ($) {
+              JQUERY4U.UTIL.setupFormValidation();
+            });
+          })(jQuery, window, document);
+          </script>
+        </div>
+      </section>
+    </div>
+  </div>
+</section>
+{% endblock %}

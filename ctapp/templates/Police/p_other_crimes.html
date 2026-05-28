@@ -1,0 +1,82 @@
+{% extends "Police/header.html" %}
+{% block content %}
+{% load static %}
+<div class="pagetitle">
+    <h1>List of Crimes</h1>
+    <nav>
+
+    </nav>
+  </div>
+    <section class="section" style="min-height: 500px;">
+      <div class="row">
+
+        {% if messages %}
+        <ul class="messages">
+            {% for message in messages %}
+          <div class="alert alert-success"> {{message }}</div>
+            {% endfor %}
+        </ul>
+        {% endif %}
+        <div class="col-lg-12">
+          <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">
+                    {% if pdata.p_type == "CI" %}
+                        All Crimes in {{ pdata.police_station.place }} Police Station
+                    {% elif pdata.p_type == "DSP" %}
+                        All Crimes in {{ pdata.district.district }} District
+                    {% else %}
+                        Crimes
+                    {% endif %}
+                </h5>
+              {% if crimes %}
+              <table class="table table-striped">
+                  <thead>
+                      <tr>
+                          <th>#</th>
+                          <th>Category</th>
+                          <th>Place</th>
+                          <th>Subject</th>
+                          <th>Date & Time</th>
+                          <th>Police Station</th>
+                   
+                          <th>Status</th>   
+                          <th>Assigned Police</th>
+                      </tr>
+                  </thead>
+                  <tbody>
+                      {% for c in crimes %}
+                      <tr>
+                          <td>{{ forloop.counter }}</td>
+                          <td>{{ c.category.category }}</td>
+                          <td>{{ c.place }}</td>
+                          <td>{{ c.subject }}</td>
+                          <td>{{ c.crime_datetime|date:"Y-m-d H:i" }}</td>
+                          <td>Police Station : {{ c.police_station.place}}<br> District:  {{c.police_station.district.district }}</td>
+                          <td>{{ c.status }}</td>
+                          <td>{{ c.police_officer.name }}</td>
+                          <td>   <a target="_blank" href="{% url 'p_google_map_view_spot' c.latitude|floatformat:10 c.longitude|floatformat:10 %}" class="btn btn-info btn">
+                            Google Location
+                        </a></td>
+                          <td><a href="{% url 'p_crime_more' c.crime_id %}" class="btn btn-info">More Details</a></td>
+                          <td>
+                          
+                               
+                                <a href="{% url 'crime_updates' c.crime_id %}" class="btn btn-info mt-2">Add Crime Updates </a>
+                            
+                       
+                        </td>
+
+                        </tr>
+                      {% endfor %}
+                  </tbody>
+              </table>
+          {% else %}
+              <p>No other crimes found.</p>
+          {% endif %}
+          </div></div>
+        </div>
+      </div>
+    </section>
+
+    {% endblock %}

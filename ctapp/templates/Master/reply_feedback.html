@@ -1,0 +1,81 @@
+{% extends "Master/header.html" %}
+{% block content %}
+{% load static %}
+<div class="pagetitle">
+    <h1>Feedback Reply</h1>
+    <nav>
+
+    </nav>
+  </div>
+    <section class="section" style="min-height: 500px;">
+      <div class="row">
+
+        {% if messages %}
+        <ul class="messages">
+            {% for message in messages %}
+          <div class="alert alert-success"> {{message }}</div>
+            {% endfor %}
+        </ul>
+        {% endif %}
+        <div class="col-lg-12">
+          <div class="card">
+            <div class="card-body">
+              <h5 class="card-title">Feedback Reply</h5>
+              <form action="{% url 'add_reply_feedback' id %}" method="post" id="myform">
+                {% csrf_token %}
+            <div class="form-group"> <label for="">Reply</label>
+            <textarea name="reply" id="reply" class="form-control"></textarea> </div>
+                <button type="submit" class="btn btn-info">Submit</button> </form>
+
+                <script src="{% static 'assets/Validation/jquery_validate.js' %}"></script>
+                <script src="{% static 'assets/Validation/additional_validate.js' %}"></script>
+<script>
+(function ($, W, D)
+{
+var JQUERY4U = {};
+JQUERY4U.UTIL =
+{
+  setupFormValidation: function ()
+  {
+    $.validator.addMethod(
+"regex",
+function(value, element, regexp) {
+var check = false;
+return this.optional(element) || regexp.test(value);
+},
+"Not a valid Input."
+);
+
+  //form validation rules
+  $("#myform").validate({
+    rules: {
+                        reply: {
+                          required: true,
+
+
+                        },
+
+                      },
+                      messages: {
+
+
+
+      },
+      submitHandler: function (form) {
+      form.submit();
+      }
+  });
+}
+}
+//when the dom has loaded setup form validation rules
+$(D).ready(function ($) {
+JQUERY4U.UTIL.setupFormValidation();
+});
+})(jQuery, window, document);
+</script>
+          </div></div>
+        </div>
+      </div>
+    </section>
+
+    {% endblock %}

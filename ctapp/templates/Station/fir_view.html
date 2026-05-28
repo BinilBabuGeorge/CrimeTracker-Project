@@ -1,0 +1,26 @@
+{% extends "Station/header.html" %}
+{% block content %}
+<div class="pagetitle">
+  <h1>FIR</h1>
+</div>
+
+<section class="section" style="min-height: 500px;">
+  <div class="row">
+    <div class="col-lg-12">
+      <div class="card">
+        <div class="card-body">
+          <h5 class="card-title">FIR for: {{ crime.subject }}</h5>
+          <p><strong>Description:</strong></p>
+          <div class="alert alert-light border">{{ fir.description }}</div>
+          <p><strong>Witness Details:</strong></p>
+          <div class="alert alert-light border">{{ fir.witness_details }}</div>
+          <p><strong>Evidence Details:</strong></p>
+          <div class="alert alert-light border">{{ fir.evidence_details }}</div>
+          <a class="btn btn-secondary" href="{% url 'station_complaint_detail' crime.crime_id %}">Back</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}
+

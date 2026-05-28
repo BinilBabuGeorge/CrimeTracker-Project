@@ -1,0 +1,68 @@
+
+{% extends "User/header.html" %}
+{% block content %}
+{% load static %}
+<section class="contact_section layout_padding">
+    <div class="container-fluid">
+      <div class="row" style="width: 90%; margin:auto">
+      
+       
+        <div class="col-md-12">
+           
+         <h1 class="text-center" style="color: rgb(14, 120, 128);">Crime List</h1>
+         <div class="container mt-4">
+         
+            <h2>Nearby Crimes within 5km</h2>
+            <table class="table table table-bordered">
+                <tr>
+                    <th>Crime ID</th>
+                    <th>Date & Time</th>
+                    <th>Crime Type</th>
+                    <th>Severity</th>
+                    <th>Police Station</th>
+                    <th>Weapon Involved</th>
+                    <th>Arrest Made</th>
+                    <th>Victim Age Group</th>
+                    <th>Suspect Age Group</th>
+                    <th>No. of Victims</th>
+                   
+                    <th>Witnesses Present</th>
+                 
+                    <th>Distance (km)</th>
+                </tr>
+                {% for crime in crimes %}
+                <tr>
+                    <td>{{ crime.Crime_ID }}</td>
+                    <td>{{ crime.Date___Time }}</td>
+                    <td>{{ crime.Crime_Type }}</td>
+                    <td>{{ crime.Severity }}</td>
+                    <td>{{ crime.Police_Station_Jurisdiction }}</td>
+                    <td>{{ crime.Weapon_Involved }}</td>
+                    <td>{{ crime.Arrest_Made }}</td>
+                    <td>{{ crime.Victim_Age_Group }}</td>
+                    <td>{{ crime.Suspect_Age_Group }}</td>
+                    <td>{{ crime.Number_of_Victims }}</td>
+                    
+                  
+                    <td>{{ crime.Witnesses_Present }}</td>
+                   
+                 
+                    <td>{{ crime.Distance|floatformat:2 }}</td>
+                </tr>
+                {% endfor %}
+            </table>
+        </div>
+     
+        </div>
+       
+      </div>
+
+    </div>
+    </div>
+  </section>
+
+  <!-- end contact section -->
+
+  <!-- info section -->
+
+  {% endblock %}

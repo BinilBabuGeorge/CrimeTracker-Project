@@ -1,0 +1,79 @@
+{% extends "Station/header.html" %}
+{% block content %}
+<div class="pagetitle">
+  <h1>Citizen Chats</h1>
+</div>
+
+<section class="section">
+  <style>
+    .inbox-card {
+      border-radius: 24px;
+      border: 1px solid #e4edf3;
+      box-shadow: 0 16px 40px rgba(15, 44, 61, 0.08);
+    }
+    .room-tile {
+      display: block;
+      padding: 18px;
+      border-radius: 18px;
+      border: 1px solid #edf2f6;
+      background: #fff;
+      color: inherit;
+      text-decoration: none;
+      margin-bottom: 14px;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+    .room-tile:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 24px rgba(15, 44, 61, 0.08);
+    }
+  </style>
+
+  <div class="row">
+    <div class="col-lg-12">
+      <div class="card inbox-card">
+        <div class="card-body p-4">
+          <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-3">
+            <div>
+              <h4 class="mb-1">{{ station.station_name }}</h4>
+              <p class="text-muted mb-0">All citizen conversations linked to this station.</p>
+            </div>
+            <span class="badge bg-info fs-6">{{ rooms|length }} active chats</span>
+          </div>
+
+          {% if rooms %}
+            <div class="row">
+              {% for room in rooms %}
+              <div class="col-lg-6">
+                <a class="room-tile" href="{% url 'station_chat_room' room.chat_room_id %}">
+                  <div class="d-flex justify-content-between align-items-start gap-3">
+                    <div>
+                      <div class="fw-bold fs-5">{{ room.user.name }}</div>
+                      <div class="text-muted small">{{ room.user.phone_number }} • {{ room.user.email_id }}</div>
+                    </div>
+                    {% if room.unread_count %}
+                    <span class="badge rounded-pill bg-danger">{{ room.unread_count }} new</span>
+                    {% endif %}
+                  </div>
+                  <div class="mt-3 text-muted">
+                    {% if room.last_message %}
+                      <strong>{{ room.last_message.sender_type|title }}:</strong> {{ room.last_message.message|truncatechars:72 }}
+                    {% else %}
+                      No messages yet. Open the room to start the conversation.
+                    {% endif %}
+                  </div>
+                  <div class="mt-3 small text-secondary">
+                    Created {{ room.created_at|date:"M d, Y h:i A" }}
+                  </div>
+                </a>
+              </div>
+              {% endfor %}
+            </div>
+          {% else %}
+            <div class="alert alert-info mb-0">No citizen chats yet.</div>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}

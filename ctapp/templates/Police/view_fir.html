@@ -1,0 +1,47 @@
+{% extends "Police/header.html" %}
+{% block content %}
+{% load static %}
+<div class="pagetitle">
+    <h1>View FIR</h1>
+    <nav>
+
+    </nav>
+  </div>
+    <section class="section" style="min-height: 500px;">
+      <div class="row">
+
+        {% if messages %}
+        <ul class="messages">
+            {% for message in messages %}
+          <div class="alert alert-success"> {{message }}</div>
+            {% endfor %}
+        </ul>
+        {% endif %}
+        <div class="col-lg-12">
+          <div class="card">
+            <div class="card-body">
+              <h5 class="card-title">View FIR </h5>
+              <table class="table table-bordered">
+                <tr>
+                    <th>Crime ID</th>
+                    <td>{{ fir.crime_id.crime_id }}</td>
+                </tr>
+                <tr>
+                    <th>FIR Description</th>
+                    <td>{{ fir.description }}</td>
+                </tr>
+                <tr>
+                    <th>Witness Details</th>
+                    <td>{{ fir.witness_details }}</td>
+                </tr>
+                <tr>
+                    <th>Evidence Details</th>
+                    <td>{{ fir.evidence_details }}</td>
+                </tr>
+            </table>
+          </div></div>
+        </div>
+      </div>
+    </section>
+
+    {% endblock %}

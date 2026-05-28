@@ -1,0 +1,60 @@
+
+
+{% extends "User/header.html" %}
+{% block content %}
+{% load static %}
+<section class="contact_section layout_padding">
+    <div class="container-fluid">
+      <div class="row">
+      
+       
+        <div class="col-md-2"></div>
+        <div class="col-md-9">
+           
+           
+         <h1 class="text-center" style="color: rgb(14, 120, 128);">Home page</h1>
+         {% if crime %}
+         <table class="table table-striped">
+             <thead>
+                 <tr>
+                     <th>#</th>
+                     <th>Category</th>
+                     <th>Place</th>
+                     <th>Subject</th>
+                     <th>Date & Time</th>
+                     <th>Status</th>
+                 </tr>
+             </thead>
+             <tbody>
+                 {% for c in crime %}
+                 <tr>
+                     <td>{{ forloop.counter }}</td>
+                     <td>{{ c.category.category }}</td>
+                     <td>{{ c.place }}</td>
+                     <td>{{ c.subject }}</td>
+                     <td>{{ c.crime_datetime|date:"Y-m-d H:i" }}</td>
+                     <td>{{ c.status }}</td>
+                     <td><a href="{% url 'crime_more' c.crime_id %}" class="btn btn-info">More Details</a></td>
+                 </tr>
+                 {% endfor %}
+             </tbody>
+         </table>
+     {% else %}
+         <p>No complaints found.</p>
+     {% endif %}
+        </div>
+        <div class=" col-md-6">
+         
+        </div>
+      </div>
+
+    </div>
+    </div>
+  </section>
+
+  <!-- end contact section -->
+
+  <!-- info section -->
+
+  {% endblock %}
+

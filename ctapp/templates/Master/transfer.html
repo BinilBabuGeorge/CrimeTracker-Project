@@ -1,0 +1,342 @@
+{% extends "Master/header.html" %}
+{% block content %}
+{% load static %}
+<div class="pagetitle">
+    <h1>Transfer Crime and Police</h1>
+    <nav>
+
+    </nav>
+  </div>
+    <section class="section" style="min-height: 500px;">
+      <div class="row">
+
+        {% if messages %}
+        <ul class="messages">
+            {% for message in messages %}
+          <div class="alert alert-success"> {{message }}</div>
+            {% endfor %}
+        </ul>
+        {% endif %}
+        <div class="col-lg-12">
+          <div class="card">
+            <div class="card-body">
+              <h5 class="card-title">Transfer</h5>
+              <form action="{% url 'save_transfer'%}" method="post" enctype="multipart/form-data" id="myform">
+                {% csrf_token %}
+                <div class="row">
+                  <div class="col-sm-4">
+                    <div class="alert alert-info">Transfer Police Officer Details</div>
+                <div class="form-group"> <label for="">New State</label>
+                  <select name="state" id="state" class="form-control">
+                    <option value="">--Select--</option>
+                     {%  for k in state  %}
+                    <option value="{{k.state_id}}">{{k.state}}</option>
+                    {% endfor  %}
+                  </select> </div>
+              <div class="form-group"> <label for="">Your District</label>
+                <select name="district" id="district" class="form-control">
+                  <option value="">--Select--</option>
+            
+                </select> </div>
+                <div class="form-group"> <label for="">Police Station</label>
+                  <select name="police_station" id="police_station" class="form-control">
+                    <option value="">--Select--</option>
+              
+                  </select> </div>
+                  <div class="form-group"> <label for="">Police </label>
+                      <select name="police" id="police" class="form-control">
+                        <option value="">--Select--</option>
+                  
+                      </select> </div></div>
+                      <div class="col-sm-4">
+                      <div class="alert alert-info"> New Assigned Police Officer Details</div>
+                      <div class="form-group"> <label for=""> State</label>
+                        <select name="state1" id="state1" class="form-control">
+                          <option value="">--Select--</option>
+                           {%  for k in state  %}
+                          <option value="{{k.state_id}}">{{k.state}}</option>
+                          {% endfor  %}
+                        </select> </div>
+                    <div class="form-group"> <label for="">Your District</label>
+                      <select name="district1" id="district1" class="form-control">
+                        <option value="">--Select--</option>
+                  
+                      </select> </div>
+                      <div class="form-group"> <label for="">Police Station</label>
+                        <select name="police_station1" id="police_station1" class="form-control">
+                          <option value="">--Select--</option>
+                    
+                        </select> </div>
+                        <div class="form-group"> <label for="">Police </label>
+                            <select name="police1" id="police1" class="form-control">
+                              <option value="">--Select--</option>
+                        
+                            </select> </div></div>
+                            <div class="col-sm-4">
+                                <div class="alert alert-info"> New Police Station</div>
+                                <div class="form-group"> <label for=""> State</label>
+                                  <select name="state2" id="state2" class="form-control">
+                                    <option value="">--Select--</option>
+                                     {%  for k in state  %}
+                                    <option value="{{k.state_id}}">{{k.state}}</option>
+                                    {% endfor  %}
+                                  </select> </div>
+                              <div class="form-group"> <label for="">Your District</label>
+                                <select name="district2" id="district2" class="form-control">
+                                  <option value="">--Select--</option>
+                            
+                                </select> </div>
+                                <div class="form-group"> <label for="">Police Station</label>
+                                  <select name="police_station2" id="police_station2" class="form-control">
+                                    <option value="">--Select--</option>
+                              
+                                  </select> </div>
+                                  
+                <!-- Subject Field -->
+              
+             </div>
+           
+              
+            
+                <!-- Submit Button -->
+                <div class="col-md-12 text-center mt-4">
+              
+                    <button type="submit" class="btn btn-primary">Submit </button>
+                  </div> 
+            </form>
+            <script src="{% static 'assets/Validation/jquery-1.11.1.min.js' %}"></script>
+            <script src="{% static 'assets/Validation/jquery_validate.js' %}"></script>
+            <script src="{% static 'assets/Validation/additional_validate.js' %}"></script>
+            <script>
+            $("#state,#state1").change(function () {
+            var state = $(this).val();
+            var targetDistrict = $(this).attr('id') === 'state' ? '#district' : '#district1'; // Determine target dropdown
+            
+            $.ajax({
+            
+            url: "{% url 'display_district' %}",
+            data: {
+            'state_id': state
+            },
+            dataType: 'json',
+            success: function (data) {
+            
+            
+              let html_data = '<option value="">--Select--</option>';
+            data.forEach(function (data) {
+            html_data += `<option value="${data.district_id}">${data.district}</option>`
+            });
+            $(targetDistrict).html(html_data); 
+            
+            
+            
+            }
+            });
+            
+            });
+            
+            $("#district,#district1").change(function () {
+            var district_id = $(this).val();
+            // var targetDistrict ='#police_station'// Determine target dropdown
+            var targetDistrict = $(this).attr('id') === 'district' ? '#police_station' : '#police_station1'; // Determine target dropdown
+           
+            alert()
+            $.ajax({
+            
+            url: "{% url 'display_police_station' %}",
+            data: {
+            'district_id': district_id
+            },
+            dataType: 'json',
+            success: function (data) {
+            
+            
+              let html_data = '<option value="">--Select--</option>';
+            data.forEach(function (data) {
+            html_data += `<option value="${data.police_station_id}">${data.place}</option>`
+            });
+            $(targetDistrict).html(html_data); 
+            
+            
+            
+            }
+            });
+            
+            });
+            $("#police_station,#police_station1").change(function () {
+            var police_station_id = $(this).val();
+
+            // var targetPolice ='#police'// Determine target dropdown
+            var targetPolice = $(this).attr('id') === 'police_station' ? '#police' : '#police1'; // Determine target dropdown
+           
+            $.ajax({
+            
+            url: "{% url 'display_police' %}",
+            data: {
+            'police_station_id': police_station_id
+            },
+            dataType: 'json',
+            success: function (data) {
+            
+            
+              let html_data = '<option value="">--Select--</option>';
+            data.forEach(function (data) {
+            html_data += `<option value="${data.police_officer_id}">${data.name}</option>`
+            });
+            $(targetPolice).html(html_data); 
+            
+            
+            
+            }
+            });
+            
+            });
+
+// ---------------------------------------------------------
+$("#state2").change(function () {
+            var state = $(this).val();
+            var targetDistrict = '#district2' // Determine target dropdown
+            
+            $.ajax({
+            
+            url: "{% url 'display_district' %}",
+            data: {
+            'state_id': state
+            },
+            dataType: 'json',
+            success: function (data) {
+            
+            
+              let html_data = '<option value="">--Select--</option>';
+            data.forEach(function (data) {
+            html_data += `<option value="${data.district_id}">${data.district}</option>`
+            });
+            $(targetDistrict).html(html_data); 
+            
+            
+            
+            }
+            });
+            
+            });
+            
+            $("#district2").change(function () {
+            var district_id = $(this).val();
+            // var targetDistrict ='#police_station'// Determine target dropdown
+            var targetDistrict =  '#police_station2'; // Determine target dropdown
+           
+            alert()
+            $.ajax({
+            
+            url: "{% url 'display_police_station' %}",
+            data: {
+            'district_id': district_id
+            },
+            dataType: 'json',
+            success: function (data) {
+            
+            
+              let html_data = '<option value="">--Select--</option>';
+            data.forEach(function (data) {
+            html_data += `<option value="${data.police_station_id}">${data.place}</option>`
+            });
+            $(targetDistrict).html(html_data); 
+            
+            
+            
+            }
+            });
+            
+            });
+            // ----------------------------------------------------------
+
+
+
+
+            </script>
+            
+                   
+            <script>
+            (function ($, W, D)
+            {
+            var JQUERY4U = {};
+            JQUERY4U.UTIL =
+            {
+            setupFormValidation: function ()
+            {
+            $.validator.addMethod(
+            "regex",
+            function(value, element, regexp) {
+            var check = false;
+            return this.optional(element) || regexp.test(value);
+            },
+            "Not a valid Input."
+            );
+            
+            //form validation rules
+            $("#myform").validate({
+            rules: {
+                            state: {
+                              required: true,
+            
+            
+                            },
+                            district: {
+                              required: true,
+            
+            
+                            },
+                            police: {
+                              required: true,
+                                      
+                            },
+                            
+                            police_station: {
+                              required: true,
+                             
+            
+                            },
+                            state1: {
+                              required: true,
+            
+            
+                            },
+                            district1: {
+                              required: true,
+            
+            
+                            },
+                            police1: {
+                              required: true,
+                                      
+                            },
+                            
+                            police_station1: {
+                              required: true,
+                             
+            
+                            },
+                          },
+                          messages: {
+            
+                         
+            
+            },
+            submitHandler: function (form) {
+            form.submit();
+            }
+            });
+            }
+            }
+            //when the dom has loaded setup form validation rules
+            $(D).ready(function ($) {
+            JQUERY4U.UTIL.setupFormValidation();
+            });
+            })(jQuery, window, document);
+            </script>
+          </div></div>
+        </div>
+      </div>
+    </section>
+
+    {% endblock %}

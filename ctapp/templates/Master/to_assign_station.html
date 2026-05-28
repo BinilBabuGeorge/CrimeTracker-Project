@@ -1,0 +1,90 @@
+{% extends "Master/header.html" %}
+{% block content %}
+{% load static %}
+<div class="pagetitle">
+  <h1>Assign Case to Police Station</h1>
+</div>
+
+<section class="section" style="min-height: 500px;">
+  <div class="row">
+    <div class="col-lg-12">
+      <div class="card">
+        <div class="card-body">
+          <h5 class="card-title">{{ crime.subject }}</h5>
+          <p><strong>Citizen:</strong> {{ crime.user.name }} ({{ crime.user.phone_number }})</p>
+          <p><strong>District:</strong> {{ crime.district.district }}</p>
+
+          <form action="{% url 'adm_assign_station' id %}" method="post" id="myform">
+            {% csrf_token %}
+            <div class="row">
+              <div class="col-md-4 mb-3">
+                <label>State</label>
+                <select name="state" id="state" class="form-control" required>
+                  <option value="">--Select--</option>
+                  {% for k in state %}
+                    <option value="{{ k.state_id }}">{{ k.state }}</option>
+                  {% endfor %}
+                </select>
+              </div>
+              <div class="col-md-4 mb-3">
+                <label>District</label>
+                <select name="district" id="district" class="form-control" required>
+                  <option value="">--Select--</option>
+                </select>
+              </div>
+              <div class="col-md-4 mb-3">
+                <label>Police Station</label>
+                <select name="police_station" id="police_station" class="form-control" required>
+                  <option value="">--Select--</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="text-center">
+              <button type="submit" class="btn btn-primary">Assign</button>
+              <a class="btn btn-secondary" href="{% url 'adm_station_pending_cases' %}">Back</a>
+            </div>
+          </form>
+
+          <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+          <script>
+            $("#state").change(function () {
+              var state = $(this).val();
+              $.ajax({
+                url: "{% url 'display_district' %}",
+                data: { 'state_id': state },
+                dataType: 'json',
+                success: function (data) {
+                  let html_data = '<option value="">--Select--</option>';
+                  data.forEach(function (d) {
+                    html_data += `<option value="${d.district_id}">${d.district}</option>`;
+                  });
+                  $("#district").html(html_data);
+                  $("#police_station").html('<option value="">--Select--</option>');
+                }
+              });
+            });
+
+            $("#district").change(function () {
+              var district_id = $(this).val();
+              $.ajax({
+                url: "{% url 'display_police_station' %}",
+                data: { 'district_id': district_id },
+                dataType: 'json',
+                success: function (data) {
+                  let html_data = '<option value="">--Select--</option>';
+                  data.forEach(function (s) {
+                    html_data += `<option value="${s.police_station_id}">${s.place}</option>`;
+                  });
+                  $("#police_station").html(html_data);
+                }
+              });
+            });
+          </script>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}
+

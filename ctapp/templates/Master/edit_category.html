@@ -1,0 +1,80 @@
+{% extends "Master/header.html" %}
+{% block content %}
+{% load static %}
+<div class="pagetitle">
+    <h1>Category</h1>
+    <nav>
+
+    </nav>
+  </div>
+    <section class="section" style="min-height: 500px;">
+      <div class="row">
+        <div class="col-lg-6">
+
+          <div class="card">
+            <div class="card-body">
+              <h5 class="card-title">Edit Category</h5>
+              <form action="/update_category/{{data.category_id}}" method="post" id="myform" class="row g-3">
+                {% csrf_token %}
+            <div class="form-group"> <label for="">Category</label>
+                <input type="text" class="form-control" value="{{data.category}}" id="" placeholder="category" name="category"> </div>
+                <div class="text-center" >
+                <button type="submit" class="btn btn-info">Submit</button></div> </form>
+
+                <script src="{% static 'assets/Validation/jquery_validate.js' %}"></script>
+                <script src="{% static 'assets/Validation/additional_validate.js' %}"></script>
+<script>
+(function ($, W, D)
+{
+var JQUERY4U = {};
+JQUERY4U.UTIL =
+{
+  setupFormValidation: function ()
+  {
+    $.validator.addMethod(
+"regex",
+function(value, element, regexp) {
+var check = false;
+return this.optional(element) || regexp.test(value);
+},
+"Not a valid Input."
+);
+
+  //form validation rules
+  $("#myform").validate({
+    rules: {
+                        category: {
+                          required: true,
+                          regex :/^[a-zA-Z ]+$/,
+
+                        },
+
+                      },
+                      messages: {
+
+
+
+      },
+      submitHandler: function (form) {
+      form.submit();
+      }
+  });
+}
+}
+//when the dom has loaded setup form validation rules
+$(D).ready(function ($) {
+JQUERY4U.UTIL.setupFormValidation();
+});
+})(jQuery, window, document);
+</script>
+
+            </div>
+          </div>
+
+        </div>
+
+
+      </div>
+    </section>
+
+    {% endblock %}

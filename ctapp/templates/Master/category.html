@@ -1,0 +1,115 @@
+{% extends "Master/header.html" %}
+{% block content %}
+{% load static %}
+<div class="pagetitle">
+    <h1>Crime  Category</h1>
+    <nav>
+
+    </nav>
+  </div>
+    <section class="section" style="min-height: 500px;">
+      <div class="row">
+        {% if messages %}
+        <ul class="messages">
+            {% for message in messages %}
+          <div class="alert alert-success"> {{message }}</div>
+            {% endfor %}
+        </ul>
+        {% endif %}
+        <div class="col-lg-6">
+
+          <div class="card">
+            <div class="card-body">
+              <h5 class="card-title">Add New Crime Category</h5>
+              <form action="{% url 'save_category' %}" method="post" id="myform" class="row g-3">
+                {% csrf_token %}
+            <div class="form-group"> <label for="">Category</label>
+                <input type="text" class="form-control" id="" placeholder="category" name="category"> </div>
+                <div class="text-center" >
+                <button type="submit" class="btn btn-primary">Submit</button></div> </form>
+</div>
+<script src="{% static 'assets/Validation/jquery-1.11.1.min.js' %}"></script>
+<script src="{% static 'assets/Validation/jquery_validate.js' %}"></script>
+<script src="{% static 'assets/Validation/additional_validate.js' %}"></script>
+<script>
+(function ($, W, D)
+{
+var JQUERY4U = {};
+JQUERY4U.UTIL =
+{
+  setupFormValidation: function ()
+  {
+    $.validator.addMethod(
+"regex",
+function(value, element, regexp) {
+var check = false;
+return this.optional(element) || regexp.test(value);
+},
+"Not a valid Input."
+);
+
+  //form validation rules
+  $("#myform").validate({
+    rules: {
+                        category: {
+                          required: true,
+                          regex :/^[a-zA-Z ]+$/,
+
+                        },
+
+                      },
+                      messages: {
+
+
+
+      },
+      submitHandler: function (form) {
+      form.submit();
+      }
+  });
+}
+}
+//when the dom has loaded setup form validation rules
+$(D).ready(function ($) {
+JQUERY4U.UTIL.setupFormValidation();
+});
+})(jQuery, window, document);
+</script>
+
+            </div>
+          </div>
+
+  
+
+        <div class="col-lg-6">
+          <div class="card">
+            <div class="card-body">
+              <h5 class="card-title">Category List</h5>
+{% if data%}
+
+          <table class="table table-striped table-bordered   border-primary">
+            <thead><th>Id</th><th>Name</th><th>#</th><th>#</th></thead>
+
+            {%  for k in data  %}
+
+              <tr>
+
+
+                <td>{{forloop.counter}}</td>
+                    <td>{{k.category}}</td>
+
+                    <td><a href="/edit_category/{{k.category_id}}" class="btn btn-info">Edit</a></td>
+                    <td><a href="/delete_category/{{k.category_id}}" onclick="return ConfirmDialog();" class="btn btn-danger">Delete</a></td>
+                </tr>
+
+                {% endfor  %}
+          </table>
+          {% else %}
+          <div class="alert alert-infp">No List available</div>
+          {% endif %}
+          </div></div>
+        </div>
+      </div>
+    </section>
+
+    {% endblock %}

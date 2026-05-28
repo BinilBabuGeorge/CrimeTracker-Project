@@ -1,0 +1,28 @@
+{% extends "Police/header.html" %}
+{% block content %}
+{% load static %}
+{% include "includes/leaflet_assets.html" %}
+<div class="pagetitle">
+  <h1>Complaint Map</h1>
+  <nav></nav>
+</div>
+<section class="section" style="min-height: 500px;">
+  <div class="row">
+    <div class="col-lg-12">
+      <div class="card">
+        <div class="card-body">
+          <h5 class="card-title">Complaint Map</h5>
+          <div
+            id="map"
+            class="leaflet-complaint-map map-lg"
+            data-mode="view"
+            data-lat="{{ latitude }}"
+            data-lng="{{ longitude }}"
+            data-popup-text="Complaint location"
+          ></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}

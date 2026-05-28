@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Crime Hotspots</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <h2>Crime Hotspots - District Wise</h2>
+    <canvas id="crimeChart"></canvas>
+
+    <script>
+        var ctx = document.getElementById("crimeChart").getContext("2d");
+
+        var crimeChart = new Chart(ctx, {
+            type: "bar",
+            data: {
+                labels: {{ districts|safe }},  // District names
+                datasets: [{
+                    label: "Crime Count",
+                    data: {{ crime_counts|safe }},  // Crime numbers
+                    backgroundColor: "rgba(255, 99, 132, 0.6)",
+                    borderColor: "rgba(255, 99, 132, 1)",
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+    </script>
+</body>
+</html>

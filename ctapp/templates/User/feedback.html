@@ -1,0 +1,132 @@
+
+{% extends "User/header.html" %}
+{% block content %}
+{% load static %}
+<section class="contact_section layout_padding">
+    <div class="container-fluid">
+      <div class="row">
+      
+       
+ <div class="col-md-2"></div>
+        <div class="col-md-9">
+           
+         <h1 class="text-center" style="color: rgb(14, 120, 128);">Feedback / Enquiry</h1>
+         
+      {% if messages %}     
+        <ul class="messages">
+            {% for message in messages %}
+          <div class="alert alert-success"> {{message }}</div>
+            {% endfor %}
+        </ul>
+        {% endif %}
+        <form method="post" action="{% url 'save_feedback' %}" method="post" id="myform" enctype="multipart/form-data">
+          {% csrf_token %}
+          <!-- <div class="form-group">
+              <label> Subject</label>
+              <input name="subject" type="text" class="form-control">
+         </div> -->
+  
+         <div class="form-group">
+               <label>Feedback</label>
+             <textarea name="feedback"  class="form-control" rows="8"></textarea>
+        </div>
+    
+    <div class="col-sm-12"  style="text-align: center;"><div>
+      <input type="submit" value="Submit" class="btn btn-info">
+  </div></div>
+  </form>
+      <script src="{% static 'assets/Validation/jquery-1.11.1.min.js' %}"></script>
+      <script src="{% static 'assets/Validation/jquery_validate.js' %}"></script>
+      <script src="{% static 'assets/Validation/additional_validate.js' %}"></script>
+
+
+             
+<script>
+(function ($, W, D)
+{
+var JQUERY4U = {};
+JQUERY4U.UTIL =
+{
+setupFormValidation: function ()
+{
+  $.validator.addMethod(
+"regex",
+function(value, element, regexp) {
+var check = false;
+return this.optional(element) || regexp.test(value);
+},
+"Not a valid Input."
+);
+
+//form validation rules
+$("#myform").validate({
+  rules: {
+      feedback: {
+                        required: true,
+
+
+                      },
+                     
+                    },
+                    messages: {
+
+                   
+
+    },
+    submitHandler: function (form) {
+    form.submit();
+    }
+});
+}
+}
+//when the dom has loaded setup form validation rules
+$(D).ready(function ($) {
+JQUERY4U.UTIL.setupFormValidation();
+});
+})(jQuery, window, document);
+</script>
+<h1 class="mb-4">Feedback List</h1>
+
+{% if data1 %}
+<table class="table table-striped table-bordered">
+  <thead><th>Id</th><th>Feedback</th><th>Reply</th><th>#</th></thead>
+
+{%  for k in data1  %}
+
+<tr>
+
+
+    <td>{{forloop.counter}}</td>
+    <!-- <td>{{k.feedback_subject}}</td> -->
+    <td>{{k.feedback}}</td>
+    <td>{{k.reply }}
+    </td>
+
+
+    <td><a href="{% url 'delete_feedback' k.feedback_id %}"  onclick="return ConfirmDialog();" class="btn btn-danger">Delete</a></td>
+</tr>
+
+{% endfor  %}</table>
+{% else %}
+<div class="alert alert-success"> No List Available</div>
+{% endif %}
+      </div>
+     
+    </div>
+
+
+        <div class=" col-md-6">
+         
+        </div>
+      </div>
+
+    </div>
+    </div>
+  </section>
+
+  <!-- end contact section -->
+
+  <!-- info section -->
+
+  {% endblock %}
+

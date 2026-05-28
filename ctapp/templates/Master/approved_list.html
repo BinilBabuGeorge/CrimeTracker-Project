@@ -1,0 +1,215 @@
+{% extends "Master/header.html" %}
+{% block content %}
+{% load static %}
+<div class="pagetitle">
+    <h1>Registered Police List</h1>
+    <nav>
+
+    </nav>
+  </div>
+    <section class="section" style="min-height: 500px;">
+      <div class="row">
+
+        {% if messages %}
+        <ul class="messages">
+            {% for message in messages %}
+          <div class="alert alert-success"> {{message }}</div>
+            {% endfor %}
+        </ul>
+        {% endif %}
+        <div class="col-lg-12">
+          <div class="card">
+            <div class="card-body">
+              <h5 class="card-title">Approved Police List</h5>
+
+              <form action="{% url 'search_police'%}" method="post" enctype="multipart/form-data" id="myform">
+                {% csrf_token %}
+                <div class="row">
+                  <div class="col-sm-3">
+                <div class="form-group"> <label for=""> State</label>
+                  <select name="state" id="state" class="form-control">
+                    <option value="">--Select--</option>
+                     {%  for k in state  %}
+                    <option value="{{k.state_id}}">{{k.state}}</option>
+                    {% endfor  %}
+                  </select> </div></div>
+                  <div class="col-sm-3"> <div class="form-group"> <label for=""> District</label>
+                <select name="district" id="district" class="form-control">
+                  <option value="">--Select--</option>
+            
+                </select> </div></div>
+                <div class="col-sm-3"> <div class="form-group"> <label for="">Police Station</label>
+                  <select name="police_station" id="police_station" class="form-control">
+                    <option value="">--Select--</option>
+              
+                  </select> </div>
+                </div>
+                <!-- Subject Field -->
+              
+              
+           
+              
+            
+                <!-- Submit Button -->
+                <div class="col-md-1 text-center mt-4">
+              
+                    <button type="submit" class="btn btn-primary">Search </button>
+                  </div> </div></div>
+            </form>
+            <script src="{% static 'assets/Validation/jquery-1.11.1.min.js' %}"></script>
+            <script src="{% static 'assets/Validation/jquery_validate.js' %}"></script>
+            <script src="{% static 'assets/Validation/additional_validate.js' %}"></script>
+            <script>
+            $("#state").change(function () {
+            var state = $(this).val();
+            var targetDistrict = $(this).attr('id') === 'state' ? '#district' : '#district1'; // Determine target dropdown
+            
+            $.ajax({
+            
+            url: "{% url 'display_district' %}",
+            data: {
+            'state_id': state
+            },
+            dataType: 'json',
+            success: function (data) {
+            
+            
+              let html_data = '<option value="">--Select--</option>';
+            data.forEach(function (data) {
+            html_data += `<option value="${data.district_id}">${data.district}</option>`
+            });
+            $(targetDistrict).html(html_data); 
+            
+            
+            
+            }
+            });
+            
+            });
+            
+            $("#district").change(function () {
+            var district_id = $(this).val();
+            var targetDistrict ='#police_station'// Determine target dropdown
+           
+            $.ajax({
+            
+            url: "{% url 'display_police_station' %}",
+            data: {
+            'district_id': district_id
+            },
+            dataType: 'json',
+            success: function (data) {
+            
+            
+              let html_data = '<option value="">--Select--</option>';
+            data.forEach(function (data) {
+            html_data += `<option value="${data.police_station_id}">${data.place}</option>`
+            });
+            $(targetDistrict).html(html_data); 
+            
+            
+            
+            }
+            });
+            
+            });
+            </script>
+            
+                   
+            <script>
+            (function ($, W, D)
+            {
+            var JQUERY4U = {};
+            JQUERY4U.UTIL =
+            {
+            setupFormValidation: function ()
+            {
+            $.validator.addMethod(
+            "regex",
+            function(value, element, regexp) {
+            var check = false;
+            return this.optional(element) || regexp.test(value);
+            },
+            "Not a valid Input."
+            );
+            
+            //form validation rules
+            $("#myform").validate({
+            rules: {
+                            state: {
+                              required: true,
+            
+            
+                            },
+                            district: {
+                              required: true,
+            
+            
+                            },
+                           
+                            
+                            police_station: {
+                              required: true,
+                             
+            
+                            },
+                          },
+                          messages: {
+            
+                         
+            
+            },
+            submitHandler: function (form) {
+            form.submit();
+            }
+            });
+            }
+            }
+            //when the dom has loaded setup form validation rules
+            $(D).ready(function ($) {
+            JQUERY4U.UTIL.setupFormValidation();
+            });
+            })(jQuery, window, document);
+            </script>
+              {% if police_officers %}
+              <table class="table table-striped table-bordered border-primary">
+                  <thead><th>Id</th><th>Police Info</th><th>Qualification</th><th>DOB</th><th>Gender</th><th>Station & Position</th><th>Photo</th><th>Proof</th></tr></thead>
+
+                  {%  for k in police_officers  %}
+
+                    <tr>
+
+
+                          <td>{{forloop.counter}}</td>
+                          <td>{{k.name}}<br>
+                            {{k.place}}<br>
+                            {{k.district.district}}<br>
+                            {{k.district.state.state}}<br>
+                            {{k.phone_number}}<br>
+                         {{k.mail_id}}<br>
+                          {{k.address}}<br>
+                        </td>
+                        <td>{{k.qualification}}</td>
+                        <td>{{k.date_of_birth}}</td>
+                        <td>{{k.gender}}</td>
+                        <td>Station : {{k.police_station.place}}<br>
+                          Position : {{k.p_type}}
+                        </td>
+                        <td><img src="{{k.photo}}"></td>
+                        <td><a href="{{k.proof}}" class="btn btn-info"> Download Proof</a></td>
+                        
+                    </tr>
+
+                    {% endfor  %}
+                    </table>
+                    {% else %}
+                    <div class="alert alert-success"> No List Available</div>
+                    {% endif %}
+
+                    
+          </div></div>
+        </div>
+      </div>
+    </section>
+
+    {% endblock %}

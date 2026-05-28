@@ -1,0 +1,90 @@
+
+
+{% extends "User/header.html" %}
+{% block content %}
+{% load static %}
+<section class="contact_section layout_padding">
+    <div class="container-fluid">
+      <div class="row">
+      
+       
+        <div class="col-md-2"></div>
+        <div class="col-md-9">
+           
+         <h1 class="text-center" style="color: rgb(14, 120, 128);">Complaint</h1>
+      
+         {% if crime %}
+         <table class="table table-striped">
+                 <tbody>
+                 
+                     <tr>
+                  
+                         <td>{{ crime.category.category }}</td>    </tr>
+                         <tr>
+                  
+                             <td>{{crime.place }}</td> </tr>
+                             <tr>
+                  
+                                 <td>{{ crime.subject }}</td> </tr>
+                                 <tr>
+                  
+                                     <td>{{ crime.crime_datetime|date:"Y-m-d H:i" }}</td> </tr>
+                                     <tr>
+                  
+                                         <td>{{ crime.status }}</td> </tr>
+                                         <tr>
+                  
+                                            <td>{{ crime.longitude }}</td> </tr>
+                                            <tr>
+                  
+                                                <td>{{ crime.latitude }}</td> </tr>
+                         
+                     </tr>
+                     <tr>
+                  
+                         <td>{{ crime.complaint_text }}</td> </tr>
+                         <tr>
+                             <td><a href="{{crime.supporting_document}}" target="_blank" class="btn btn-info">Download Document</a></td>
+                             </tr>
+   
+                 </tbody>
+             </table>
+         {% else %}
+             <p>No complaints found.</p>
+         {% endif %}
+        
+            {% if fir %}
+            <h5 class="card-title">First Investigation Report </h5>
+            <table class="table table-bordered">
+              <tr>
+                  <th>Crime ID</th>
+                  <td>{{ fir.crime_id.crime_id }}</td>
+              </tr>
+              <tr>
+                  <th>FIR Description</th>
+                  <td>{{ fir.description }}</td>
+              </tr>
+              <tr>
+                  <th>Witness Details</th>
+                  <td>{{ fir.witness_details }}</td>
+              </tr>
+              <tr>
+                  <th>Evidence Details</th>
+                  <td>{{ fir.evidence_details }}</td>
+              </tr>
+          </table>
+          {% else %}
+          <p>No First Investigation Report found.</p>
+      {% endif %}
+        </div>
+      </div>
+
+    </div>
+    </div>
+  </section>
+
+  <!-- end contact section -->
+
+  <!-- info section -->
+
+  {% endblock %}

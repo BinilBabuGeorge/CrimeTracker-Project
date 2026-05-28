@@ -1,0 +1,124 @@
+{% extends "Station/header.html" %}
+{% block content %}
+{% include "includes/leaflet_assets.html" %}
+<div class="pagetitle">
+  <h1>Complaint Detail</h1>
+</div>
+
+<section class="section" style="min-height: 500px;">
+  <div class="row">
+    <div class="col-lg-12">
+      {% if messages %}
+        {% for message in messages %}
+          <div class="alert alert-success">{{ message }}</div>
+        {% endfor %}
+      {% endif %}
+      <div class="card">
+        <div class="card-body">
+          <h5 class="card-title">{{ crime.subject }}</h5>
+          <div class="row">
+            <div class="col-md-6">
+              <p><strong>Citizen:</strong> {{ crime.user.name }} ({{ crime.user.phone_number }})</p>
+              <p><strong>Category:</strong> {{ crime.category.category }}</p>
+              <p><strong>District:</strong> {{ crime.district.district }}</p>
+              <p><strong>Place:</strong> {{ crime.place }}</p>
+              <p><strong>Status:</strong> {{ crime.status }}</p>
+              <p><strong>Assigned officer:</strong> {% if crime.police_officer %}{{ crime.police_officer.name }}{% else %}-{% endif %}</p>
+            </div>
+            <div class="col-md-6">
+              {% if crime.supporting_document %}
+                <p><strong>Document:</strong> <a class="btn btn-outline-primary btn-sm" href="{{ crime.supporting_document }}">View</a></p>
+              {% endif %}
+              {% if crime.has_location %}
+                <p><strong>Location:</strong> {{ crime.latitude }}, {{ crime.longitude }}</p>
+                <div
+                  class="leaflet-complaint-map"
+                  data-mode="view"
+                  data-lat="{{ crime.latitude }}"
+                  data-lng="{{ crime.longitude }}"
+                  data-popup-text="{{ crime.subject|escapejs }}"
+                ></div>
+              {% endif %}
+            </div>
+          </div>
+          <hr>
+
+          <h6>Complaint Text</h6>
+          <div class="alert alert-light border">{{ crime.complaint_text }}</div>
+
+          <div class="row">
+            <div class="col-md-6">
+              <h6>Assign to Officer</h6>
+              <form method="post" action="{% url 'station_assign_complaint' crime.crime_id %}">
+                {% csrf_token %}
+                <div class="input-group mb-3">
+                  <select class="form-control" name="police_officer" required>
+                    <option value="">--Select Officer--</option>
+                    {% for o in officers %}
+                      <option value="{{ o.police_officer_id }}">{{ o.name }} ({{ o.p_type }})</option>
+                    {% endfor %}
+                  </select>
+                  <button class="btn btn-primary" type="submit">Assign</button>
+                </div>
+              </form>
+            </div>
+
+            <div class="col-md-6">
+              <h6>FIR</h6>
+              {% if fir %}
+                <a class="btn btn-success btn-sm" href="{% url 'station_view_fir' crime.crime_id %}">View FIR</a>
+              {% else %}
+                <a class="btn btn-warning btn-sm" href="{% url 'station_add_fir' crime.crime_id %}">Create FIR</a>
+              {% endif %}
+            </div>
+          </div>
+
+          <hr>
+          <h6>Update Case</h6>
+          <form method="post" action="{% url 'station_update_case' crime.crime_id %}">
+            {% csrf_token %}
+            <div class="row">
+              <div class="col-md-4 mb-3">
+                <label>Status</label>
+                <select class="form-control" name="status">
+                  <option value="Pending" {% if crime.status == 'Pending' %}selected{% endif %}>Pending</option>
+                  <option value="Investigating" {% if crime.status == 'Investigating' %}selected{% endif %}>Investigating</option>
+                  <option value="Resolved" {% if crime.status == 'Resolved' %}selected{% endif %}>Resolved</option>
+                </select>
+              </div>
+              <div class="col-md-4 mb-3">
+                <label>Place</label>
+                <input class="form-control" name="place" value="{{ crime.place }}">
+              </div>
+              <div class="col-md-4 mb-3">
+                <label>Subject</label>
+                <input class="form-control" name="subject" value="{{ crime.subject }}">
+              </div>
+              <div class="col-md-12 mb-3">
+                <label>Complaint Details</label>
+                <textarea class="form-control" name="complaint_text" rows="4">{{ crime.complaint_text }}</textarea>
+              </div>
+            </div>
+            <button class="btn btn-primary" type="submit">Save Updates</button>
+            <a class="btn btn-secondary" href="{% url 'station_complaints' %}">Back</a>
+          </form>
+
+          {% if updates %}
+            <hr>
+            <h6>Update History</h6>
+            <ul class="list-group">
+              {% for u in updates %}
+                <li class="list-group-item">
+                  <strong>{{ u.created_at }}</strong> - {{ u.crime_updates }}
+                  {% if u.filedoc %}<div><a href="{{ u.filedoc }}">Attachment</a></div>{% endif %}
+                </li>
+              {% endfor %}
+            </ul>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}
+

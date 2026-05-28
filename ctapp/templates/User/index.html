@@ -1,0 +1,217 @@
+{% extends "User/header.html" %}
+{% block content %}
+<section class="contact_section layout_padding" style="background: linear-gradient(180deg, #f4fbff 0%, #ffffff 100%);">
+  <div class="container">
+    <style>
+      .citizen-hero {
+        background: linear-gradient(135deg, #0c7282, #19a7b9);
+        border-radius: 28px;
+        color: #fff;
+        padding: 32px;
+        box-shadow: 0 18px 45px rgba(12, 114, 130, 0.2);
+      }
+      .citizen-card {
+        background: #fff;
+        border-radius: 22px;
+        border: 1px solid rgba(12, 114, 130, 0.12);
+        box-shadow: 0 12px 30px rgba(15, 44, 61, 0.08);
+        padding: 24px;
+        height: 100%;
+      }
+      .chat-preview {
+        display: block;
+        padding: 14px 0;
+        color: inherit;
+        text-decoration: none;
+        border-bottom: 1px solid #edf3f7;
+      }
+      .chat-preview:last-child {
+        border-bottom: 0;
+      }
+      .chat-preview small {
+        color: #6c7b88;
+      }
+      .dashboard-pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        background: rgba(255, 255, 255, 0.15);
+        border: 1px solid rgba(255, 255, 255, 0.25);
+        border-radius: 999px;
+        padding: 8px 14px;
+        margin-right: 10px;
+        margin-bottom: 10px;
+      }
+    </style>
+
+    <div class="citizen-hero mb-4">
+      <div class="row align-items-center">
+        <div class="col-lg-8">
+          <h1 style="font-weight: 700; margin-bottom: 12px;">Citizen Dashboard</h1>
+          <p style="font-size: 16px; opacity: 0.95; margin-bottom: 18px;">
+            Track your complaints, chat with the assigned police station in real time, and send an emergency panic alert when you need help fast.
+          </p>
+          <div>
+            <span class="dashboard-pill">Open chat rooms: {{ chat_room_count }}</span>
+            {% if active_chat_room %}
+            <span class="dashboard-pill">Latest station: {{ active_chat_room.police_station.station_name|default:active_chat_room.police_station.place }}</span>
+            {% endif %}
+          </div>
+        </div>
+        <div class="col-lg-4 text-lg-end mt-4 mt-lg-0">
+          <a href="{% url 'add_complaints' %}" class="btn btn-light btn-lg" style="border-radius: 999px; padding: 12px 26px;">File Complaint</a>
+          <button id="panic-btn" class="btn btn-danger btn-lg" style="border-radius: 999px; padding: 12px 26px; margin-left: 10px;">Emergency Panic</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-lg-5 mb-4">
+        <div class="citizen-card">
+          <h3 style="font-weight: 700; margin-bottom: 12px;">Police Chat</h3>
+          <p style="color: #657786;">Your chats stay linked to the police stations handling your complaints.</p>
+          {% if chat_rooms %}
+            {% for room in chat_rooms %}
+            <a class="chat-preview" href="{% url 'user_chat_room' room.chat_room_id %}">
+              <div style="display:flex; justify-content:space-between; gap:12px; align-items:flex-start;">
+                <div>
+                  <div style="font-weight:700;">{{ room.police_station.station_name|default:"Police Station" }}</div>
+                  <small>{{ room.police_station.place }}{% if room.last_message %} • {{ room.last_message.message|truncatechars:38 }}{% endif %}</small>
+                </div>
+                {% if room.unread_count %}
+                <span class="badge badge-pill badge-danger" style="background:#d64545;">{{ room.unread_count }}</span>
+                {% endif %}
+              </div>
+            </a>
+            {% endfor %}
+            <a href="{% url 'user_chat' %}" class="btn btn-outline-info" style="margin-top: 10px; border-radius: 999px;">Open Full Chat</a>
+          {% else %}
+            <div class="alert alert-info" style="border-radius: 16px;">
+              Your chat will appear once a complaint is linked to a police station.
+            </div>
+          {% endif %}
+        </div>
+      </div>
+
+      <div class="col-lg-7 mb-4">
+        <div class="citizen-card">
+          <h3 style="font-weight: 700; margin-bottom: 12px;">Quick Actions</h3>
+          <div class="row">
+            <div class="col-md-6 mb-3">
+              <div style="background:#f4fbff; border-radius:18px; padding:18px; height:100%;">
+                <h5 style="font-weight:700;">Complaint Status</h5>
+                <p style="color:#657786;">Review updates, FIR information, and investigation progress.</p>
+                <a href="{% url 'view_complaints' %}" class="btn btn-outline-info" style="border-radius:999px;">View Complaints</a>
+              </div>
+            </div>
+            <div class="col-md-6 mb-3">
+              <div style="background:#fff6ed; border-radius:18px; padding:18px; height:100%;">
+                <h5 style="font-weight:700;">Support & Enquiry</h5>
+                <p style="color:#657786;">Send follow-up questions or feedback without changing the complaint system.</p>
+                <a href="{% url 'feedback' %}" class="btn btn-outline-warning" style="border-radius:999px;">Open Feedback</a>
+              </div>
+            </div>
+          </div>
+          {% if active_chat_room %}
+          <div style="margin-top: 8px; padding: 18px; border-radius: 18px; background: #f8fbfd; border: 1px solid #e6eff5;">
+            <div style="display:flex; justify-content:space-between; gap:12px; align-items:center;">
+              <div>
+                <div style="font-size:13px; letter-spacing:0.08em; text-transform:uppercase; color:#6c7b88;">Current conversation</div>
+                <div style="font-size:22px; font-weight:700;">{{ active_chat_room.police_station.station_name|default:"Police Station" }}</div>
+              </div>
+              <a href="{% url 'user_chat_room' active_chat_room.chat_room_id %}" class="btn btn-info" style="border-radius:999px; color:#fff;">Resume Chat</a>
+            </div>
+          </div>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+function getCookie(name) {
+  const value = `; ${document.cookie}`;
+  const parts = value.split(`; ${name}=`);
+  if (parts.length === 2) return parts.pop().split(';').shift();
+}
+
+function showLocationHelp() {
+  alert(
+    "Location permission is blocked. Please allow location for this site in your browser settings, then click Emergency Panic again."
+  );
+}
+
+function sendPanicAlert(lat, lon, locationNote) {
+  const body = new URLSearchParams();
+  if (lat !== null && lat !== undefined && lon !== null && lon !== undefined) {
+    body.append("latitude", lat);
+    body.append("longitude", lon);
+  }
+
+  fetch("{% url 'panic_send' %}", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/x-www-form-urlencoded",
+      "X-CSRFToken": getCookie("csrftoken")
+    },
+    body: body.toString()
+  })
+  .then(r => r.json())
+  .then(data => {
+    if (data.ok) {
+      const message = data.location_received
+        ? "Emergency alert sent with your location. Please stay safe."
+        : "Emergency alert sent without location. " + locationNote;
+      alert(message);
+    } else {
+      alert("Failed: " + (data.error || "Unknown error"));
+    }
+  })
+  .catch(() => alert("Network error"));
+}
+
+document.getElementById("panic-btn").addEventListener("click", function () {
+  if (!navigator.geolocation) {
+    sendPanicAlert(null, null, "Your browser does not support location access.");
+    return;
+  }
+
+  if (navigator.permissions && navigator.permissions.query) {
+    navigator.permissions.query({ name: "geolocation" }).then(function (result) {
+      if (result.state === "denied") {
+        showLocationHelp();
+        return;
+      }
+      requestCurrentLocation();
+    }).catch(function () {
+      requestCurrentLocation();
+    });
+    return;
+  }
+
+  requestCurrentLocation();
+});
+
+function requestCurrentLocation() {
+  navigator.geolocation.getCurrentPosition(function (pos) {
+    sendPanicAlert(pos.coords.latitude, pos.coords.longitude, "Location access was unavailable.");
+  }, function (err) {
+    if (err && err.code === 1) {
+      showLocationHelp();
+      return;
+    }
+
+    let reason = "Location access was unavailable.";
+    if (err && err.code === 2) {
+      reason = "Location information could not be determined.";
+    } else if (err && err.code === 3) {
+      reason = "Location request timed out.";
+    }
+    if (confirm(reason + " Send emergency alert without location?")) {
+      sendPanicAlert(null, null, reason);
+    }
+  }, { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 });
+}
+</script>
+{% endblock %}

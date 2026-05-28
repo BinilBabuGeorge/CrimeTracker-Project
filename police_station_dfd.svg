@@ -1,0 +1,93 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="1100" viewBox="0 0 1600 1100">
+  <rect width="1600" height="1100" fill="#ffffff"/>
+
+  <defs>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L0,6 L9,3 z" fill="#111"/>
+    </marker>
+    <style>
+      .title { font: bold 32px Arial, sans-serif; fill: #111; }
+      .subtitle { font: bold 24px Arial, sans-serif; fill: #111; }
+      .label { font: 20px Arial, sans-serif; fill: #111; }
+      .small { font: 16px Arial, sans-serif; fill: #111; }
+      .box { fill: none; stroke: #111; stroke-width: 2; }
+      .proc { fill: none; stroke: #111; stroke-width: 2.2; }
+      .line { stroke: #111; stroke-width: 2; fill: none; marker-end: url(#arrow); }
+    </style>
+  </defs>
+
+  <text x="800" y="70" text-anchor="middle" class="title">CrimeTracker Police Station DFD</text>
+  <text x="800" y="110" text-anchor="middle" class="subtitle">Level 1 - Police Station</text>
+
+  <rect x="60" y="180" width="200" height="60" class="box"/>
+  <text x="160" y="218" text-anchor="middle" class="label">Police Station</text>
+
+  <ellipse cx="400" cy="210" rx="110" ry="42" class="proc"/>
+  <text x="400" y="217" text-anchor="middle" class="label">Login</text>
+
+  <rect x="320" y="330" width="170" height="55" class="box"/>
+  <text x="405" y="364" text-anchor="middle" class="label">Station Login DB</text>
+
+  <ellipse cx="760" cy="110" rx="160" ry="42" class="proc"/>
+  <text x="760" y="117" text-anchor="middle" class="label">View Complaints</text>
+
+  <ellipse cx="760" cy="230" rx="185" ry="42" class="proc"/>
+  <text x="760" y="237" text-anchor="middle" class="label">Manage Officers</text>
+
+  <ellipse cx="760" cy="350" rx="180" ry="42" class="proc"/>
+  <text x="760" y="357" text-anchor="middle" class="label">Assign Case to Officer</text>
+
+  <ellipse cx="760" cy="470" rx="180" ry="42" class="proc"/>
+  <text x="760" y="477" text-anchor="middle" class="label">Update Case Status</text>
+
+  <ellipse cx="760" cy="590" rx="145" ry="42" class="proc"/>
+  <text x="760" y="597" text-anchor="middle" class="label">Create FIR</text>
+
+  <ellipse cx="760" cy="710" rx="155" ry="42" class="proc"/>
+  <text x="760" y="717" text-anchor="middle" class="label">Handle Chat</text>
+
+  <ellipse cx="760" cy="830" rx="170" ry="42" class="proc"/>
+  <text x="760" y="837" text-anchor="middle" class="label">View Panic Alerts</text>
+
+  <rect x="1170" y="80" width="230" height="55" class="box"/>
+  <text x="1285" y="114" text-anchor="middle" class="label">Crime DB</text>
+
+  <rect x="1170" y="200" width="230" height="55" class="box"/>
+  <text x="1285" y="234" text-anchor="middle" class="label">Police Officer DB</text>
+
+  <rect x="1170" y="320" width="230" height="55" class="box"/>
+  <text x="1285" y="343" text-anchor="middle" class="small">Crime DB /</text>
+  <text x="1285" y="363" text-anchor="middle" class="small">Police Officer DB</text>
+
+  <rect x="1170" y="440" width="230" height="55" class="box"/>
+  <text x="1285" y="463" text-anchor="middle" class="small">Crime DB /</text>
+  <text x="1285" y="483" text-anchor="middle" class="small">Notification DB</text>
+
+  <rect x="1170" y="560" width="230" height="55" class="box"/>
+  <text x="1285" y="594" text-anchor="middle" class="label">FIR DB</text>
+
+  <rect x="1170" y="680" width="230" height="55" class="box"/>
+  <text x="1285" y="714" text-anchor="middle" class="label">Chat DB</text>
+
+  <rect x="1170" y="800" width="230" height="55" class="box"/>
+  <text x="1285" y="823" text-anchor="middle" class="small">Panic Alert DB /</text>
+  <text x="1285" y="843" text-anchor="middle" class="small">Police Station DB</text>
+
+  <line x1="260" y1="210" x2="290" y2="210" class="line"/>
+  <line x1="510" y1="210" x2="600" y2="110" class="line"/>
+  <line x1="510" y1="210" x2="575" y2="230" class="line"/>
+  <line x1="510" y1="210" x2="585" y2="350" class="line"/>
+  <line x1="510" y1="210" x2="595" y2="470" class="line"/>
+  <line x1="510" y1="210" x2="625" y2="590" class="line"/>
+  <line x1="510" y1="210" x2="615" y2="710" class="line"/>
+  <line x1="510" y1="210" x2="605" y2="830" class="line"/>
+  <line x1="400" y1="252" x2="400" y2="330" class="line"/>
+
+  <line x1="920" y1="110" x2="1170" y2="107" class="line"/>
+  <line x1="945" y1="230" x2="1170" y2="227" class="line"/>
+  <line x1="940" y1="350" x2="1170" y2="347" class="line"/>
+  <line x1="940" y1="470" x2="1170" y2="467" class="line"/>
+  <line x1="905" y1="590" x2="1170" y2="587" class="line"/>
+  <line x1="915" y1="710" x2="1170" y2="707" class="line"/>
+  <line x1="930" y1="830" x2="1170" y2="827" class="line"/>
+</svg>

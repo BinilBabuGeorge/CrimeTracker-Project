@@ -1,0 +1,74 @@
+{% extends "Police/header.html" %}
+{% block content %}
+<div class="pagetitle">
+  <h1>Police Dashboard</h1>
+</div>
+
+<section class="section">
+  <div class="row">
+    <div class="col-lg-12">
+      <div class="card" style="border-radius:24px; overflow:hidden; border:1px solid #e4edf3; box-shadow:0 16px 40px rgba(15, 44, 61, 0.08);">
+        <div class="card-body p-4" style="background:linear-gradient(135deg, #1b4d9f, #2c81f7); color:#fff;">
+          <div class="d-flex justify-content-between align-items-center flex-wrap gap-3">
+            <div>
+              <div class="text-uppercase small" style="letter-spacing:0.08em; opacity:0.8;">Officer Dashboard</div>
+              <h2 class="mb-1">{{ pdata.name }}</h2>
+              <div style="opacity:0.9;">{{ pdata.p_type }} • {{ pdata.police_station.station_name }} • {{ pdata.district.district }}</div>
+            </div>
+            <a href="{% url 'police_chat_list' %}" class="btn btn-light rounded-pill px-4">Open Citizen Chat</a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-lg-4">
+      <div class="card" style="border-radius:22px;">
+        <div class="card-body">
+          <h5 class="card-title">Citizen Chats</h5>
+          <h2>{{ chat_room_count }}</h2>
+          <p class="text-muted">Live conversations for your station.</p>
+        </div>
+      </div>
+    </div>
+    <div class="col-lg-8">
+      <div class="card" style="border-radius:22px;">
+        <div class="card-body">
+          <h5 class="card-title">Recent Conversations</h5>
+          {% if chat_rooms %}
+          <div class="table-responsive">
+            <table class="table table-striped align-middle">
+              <thead>
+                <tr>
+                  <th>Citizen</th>
+                  <th>Latest Message</th>
+                  <th>Unread</th>
+                  <th>Open</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for room in chat_rooms %}
+                <tr>
+                  <td>{{ room.user.name }}</td>
+                  <td>
+                    {% if room.last_message %}
+                      {{ room.last_message.message|truncatechars:60 }}
+                    {% else %}
+                      No messages yet
+                    {% endif %}
+                  </td>
+                  <td>{{ room.unread_count }}</td>
+                  <td><a href="{% url 'police_chat_room' room.chat_room_id %}" class="btn btn-primary btn-sm rounded-pill">Open</a></td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+          {% else %}
+          <div class="alert alert-info mb-0">No citizen chats yet.</div>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}

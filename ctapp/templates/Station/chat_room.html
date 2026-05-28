@@ -1,0 +1,184 @@
+{% extends "Station/header.html" %}
+{% block content %}
+{% load static %}
+<div class="pagetitle">
+  <h1>Citizen Chat Room</h1>
+</div>
+
+<section class="section">
+  <style>
+    .station-chat-shell {
+      background: #fff;
+      border: 1px solid #e4edf3;
+      border-radius: 24px;
+      overflow: hidden;
+      box-shadow: 0 16px 40px rgba(15, 44, 61, 0.08);
+    }
+    .station-sidebar {
+      background: linear-gradient(180deg, #f7fbff 0%, #eef5fb 100%);
+      padding: 22px;
+      min-height: 720px;
+    }
+    .station-contact {
+      display: block;
+      border-radius: 18px;
+      border: 1px solid #e3ebf1;
+      background: #fff;
+      padding: 16px;
+      margin-bottom: 12px;
+      color: inherit;
+      text-decoration: none;
+    }
+    .station-contact.active {
+      background: linear-gradient(135deg, #0f6d7b, #1f92b5);
+      color: #fff;
+      box-shadow: 0 12px 30px rgba(15, 109, 123, 0.18);
+    }
+    .station-chat-pane {
+      min-height: 720px;
+      display: flex;
+      flex-direction: column;
+      background: #f7fbfd;
+    }
+    .station-chat-head {
+      padding: 24px 28px;
+      border-bottom: 1px solid #e7eef4;
+      background: #fff;
+    }
+    .station-chat-log {
+      flex: 1;
+      overflow-y: auto;
+      padding: 26px;
+    }
+    .msg-row {
+      display: flex;
+      margin-bottom: 16px;
+    }
+    .msg-row.station {
+      justify-content: flex-end;
+    }
+    .msg-bubble {
+      max-width: 72%;
+      padding: 14px 16px;
+      border-radius: 22px;
+      box-shadow: 0 10px 25px rgba(15, 44, 61, 0.08);
+    }
+    .msg-row.station .msg-bubble {
+      background: linear-gradient(135deg, #0f6d7b, #1f92b5);
+      color: #fff;
+      border-bottom-right-radius: 8px;
+    }
+    .msg-row.user .msg-bubble {
+      background: #fff;
+      color: #153744;
+      border: 1px solid #e3ebf1;
+      border-bottom-left-radius: 8px;
+    }
+    .msg-meta {
+      margin-top: 6px;
+      font-size: 12px;
+      opacity: 0.78;
+    }
+    .station-compose {
+      padding: 20px 24px 24px;
+      background: #fff;
+      border-top: 1px solid #e7eef4;
+    }
+    .station-compose-box {
+      display: flex;
+      gap: 12px;
+    }
+    .station-compose-box input {
+      width: 100%;
+      border-radius: 999px;
+      border: 1px solid #d8e4eb;
+      padding: 14px 18px;
+    }
+    .station-compose-box button {
+      border: 0;
+      border-radius: 999px;
+      background: linear-gradient(135deg, #0f6d7b, #1f92b5);
+      color: #fff;
+      padding: 0 24px;
+    }
+  </style>
+
+  <div class="station-chat-shell">
+    <div class="row g-0">
+      <div class="col-lg-4">
+        <div class="station-sidebar">
+          <h4 class="fw-bold">All Citizen Chats</h4>
+          <p class="text-muted">Open any conversation and reply in real time.</p>
+          {% for item in rooms %}
+          <a href="{% url 'station_chat_room' item.chat_room_id %}" class="station-contact{% if room.chat_room_id == item.chat_room_id %} active{% endif %}">
+            <div class="d-flex justify-content-between gap-2">
+              <div>
+                <div class="fw-bold">{{ item.user.name }}</div>
+                <div class="small" style="opacity:0.78;">{{ item.user.phone_number }}</div>
+              </div>
+              {% if item.unread_count %}
+              <span class="badge rounded-pill bg-danger" style="height: fit-content;">{{ item.unread_count }}</span>
+              {% endif %}
+            </div>
+            <div class="small mt-2" style="opacity:0.8;">
+              {% if item.last_message %}
+                {{ item.last_message.message|truncatechars:52 }}
+              {% else %}
+                No messages yet.
+              {% endif %}
+            </div>
+          </a>
+          {% endfor %}
+        </div>
+      </div>
+
+      <div class="col-lg-8">
+        <div class="station-chat-pane">
+          <div class="station-chat-head">
+            <div class="d-flex justify-content-between align-items-center gap-3 flex-wrap">
+              <div>
+                <div class="text-uppercase small text-muted">Citizen</div>
+                <h3 class="mb-1">{{ room.user.name }}</h3>
+                <div class="text-muted">{{ room.user.phone_number }} • {{ room.user.email_id }}</div>
+              </div>
+              <a class="btn btn-outline-primary rounded-pill" href="{% url 'station_chat_list' %}">Back to Inbox</a>
+            </div>
+          </div>
+
+          <div class="station-chat-log" id="chat-log">
+            {% for m in history %}
+            <div class="msg-row {{ m.sender_type }}">
+              <div class="msg-bubble">
+                <div>{{ m.message }}</div>
+                <div class="msg-meta">{{ m.created_at|date:"M d, Y h:i A" }}</div>
+              </div>
+            </div>
+            {% empty %}
+            <div class="text-center text-muted mt-5">No messages yet. Reply when the citizen reaches out.</div>
+            {% endfor %}
+          </div>
+
+            <div class="station-compose">
+            <div class="station-compose-box">
+              <input id="chat-message-input" type="text" placeholder="Reply to {{ room.user.name }}">
+              <button type="button" id="chat-send-button">Send</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script src="{% static 'ctapp/js/chat_room.js' %}"></script>
+<script>
+  initChatRoom({
+    apiUrl: "{% url 'chat_room_messages_api' room.chat_room_id %}",
+    chatLogId: "chat-log",
+    inputId: "chat-message-input",
+    buttonId: "chat-send-button",
+    emptyMessage: "No messages yet. Reply when the citizen reaches out.",
+    pollMs: 2500
+  });
+</script>
+{% endblock %}

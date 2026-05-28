@@ -1,0 +1,205 @@
+{% extends "User/header.html" %}
+{% block content %}
+{% load static %}
+<section class="contact_section layout_padding" style="background: linear-gradient(180deg, #eef7fb 0%, #ffffff 100%);">
+  <div class="container">
+    <style>
+      .chat-shell {
+        background: #fff;
+        border-radius: 28px;
+        overflow: hidden;
+        box-shadow: 0 22px 60px rgba(15, 44, 61, 0.12);
+        border: 1px solid rgba(18, 104, 121, 0.1);
+      }
+      .chat-sidebar {
+        background: linear-gradient(180deg, #f8fcff 0%, #eef7fb 100%);
+        padding: 24px;
+        height: 100%;
+      }
+      .chat-contact {
+        display: block;
+        padding: 16px 18px;
+        border-radius: 18px;
+        background: #fff;
+        border: 1px solid #e5eef4;
+        margin-bottom: 12px;
+        color: inherit;
+        text-decoration: none;
+      }
+      .chat-contact.active {
+        background: linear-gradient(135deg, #0d7485, #18a7ba);
+        color: #fff;
+        box-shadow: 0 14px 28px rgba(13, 116, 133, 0.2);
+      }
+      .chat-pane {
+        display: flex;
+        flex-direction: column;
+        min-height: 680px;
+        background: radial-gradient(circle at top right, rgba(24, 167, 186, 0.08), transparent 28%), #f7fbfd;
+      }
+      .chat-head {
+        padding: 24px 28px;
+        border-bottom: 1px solid #e8eef3;
+        background: rgba(255, 255, 255, 0.9);
+      }
+      .chat-messages {
+        flex: 1;
+        padding: 26px;
+        overflow-y: auto;
+      }
+      .msg-row {
+        display: flex;
+        margin-bottom: 16px;
+      }
+      .msg-row.user {
+        justify-content: flex-end;
+      }
+      .msg-bubble {
+        max-width: 72%;
+        padding: 14px 16px;
+        border-radius: 22px;
+        box-shadow: 0 10px 25px rgba(15, 44, 61, 0.08);
+      }
+      .msg-row.user .msg-bubble {
+        background: linear-gradient(135deg, #0d7485, #18a7ba);
+        color: #fff;
+        border-bottom-right-radius: 8px;
+      }
+      .msg-row.station .msg-bubble {
+        background: #fff;
+        color: #183642;
+        border: 1px solid #e4edf2;
+        border-bottom-left-radius: 8px;
+      }
+      .msg-meta {
+        margin-top: 6px;
+        font-size: 12px;
+        opacity: 0.75;
+      }
+      .chat-compose {
+        padding: 20px 24px 24px;
+        border-top: 1px solid #e8eef3;
+        background: #fff;
+      }
+      .chat-compose-box {
+        display: flex;
+        gap: 12px;
+      }
+      .chat-compose-box input {
+        border-radius: 999px;
+        border: 1px solid #d8e4eb;
+        padding: 14px 18px;
+        width: 100%;
+      }
+      .chat-compose-box button {
+        border: 0;
+        border-radius: 999px;
+        background: linear-gradient(135deg, #0d7485, #18a7ba);
+        color: #fff;
+        padding: 0 24px;
+      }
+      @media (max-width: 991px) {
+        .chat-pane {
+          min-height: 560px;
+        }
+        .msg-bubble {
+          max-width: 88%;
+        }
+      }
+    </style>
+
+    <div class="chat-shell">
+      <div class="row no-gutters" style="margin:0;">
+        <div class="col-lg-4">
+          <div class="chat-sidebar">
+            <h3 style="font-weight:700;">Your Police Chats</h3>
+            <p style="color:#6b7c88; margin-bottom:20px;">Select a station to continue the conversation.</p>
+            {% if rooms %}
+              {% for room in rooms %}
+              <a href="{% url 'user_chat_room' room.chat_room_id %}" class="chat-contact{% if selected_room and selected_room.chat_room_id == room.chat_room_id %} active{% endif %}">
+                <div style="display:flex; justify-content:space-between; gap:12px;">
+                  <div>
+                    <div style="font-weight:700;">{{ room.police_station.station_name|default:"Police Station" }}</div>
+                    <div style="font-size:13px; opacity:0.78;">{{ room.police_station.place }}</div>
+                    <div style="font-size:13px; margin-top:6px;">
+                      {% if room.last_message %}
+                        {{ room.last_message.message|truncatechars:48 }}
+                      {% else %}
+                        Start a conversation with this station.
+                      {% endif %}
+                    </div>
+                  </div>
+                  {% if room.unread_count %}
+                  <span class="badge badge-pill badge-light" style="height:fit-content; font-size:12px;">{{ room.unread_count }}</span>
+                  {% endif %}
+                </div>
+              </a>
+              {% endfor %}
+            {% else %}
+              <div class="alert alert-info" style="border-radius:16px;">No station chat is available yet. Once a complaint is mapped to a station, the conversation will appear here.</div>
+            {% endif %}
+          </div>
+        </div>
+
+        <div class="col-lg-8">
+          <div class="chat-pane">
+            {% if selected_room %}
+            <div class="chat-head">
+              <div style="display:flex; justify-content:space-between; gap:12px; align-items:center;">
+                <div>
+                  <div style="font-size:13px; text-transform:uppercase; letter-spacing:0.08em; color:#6b7c88;">Connected Station</div>
+                  <h3 style="margin:0; font-weight:700;">{{ selected_room.police_station.station_name|default:"Police Station" }}</h3>
+                  <div style="color:#6b7c88;">{{ selected_room.police_station.place }}{% if selected_room.police_station.phone_number %} • {{ selected_room.police_station.phone_number }}{% endif %}</div>
+                </div>
+                <a href="{% url 'view_complaints' %}" class="btn btn-outline-info" style="border-radius:999px;">View Complaints</a>
+              </div>
+            </div>
+
+            <div class="chat-messages" id="chat-log">
+              {% for m in history %}
+              <div class="msg-row {{ m.sender_type }}">
+                <div class="msg-bubble">
+                  <div>{{ m.message }}</div>
+                  <div class="msg-meta">{{ m.created_at|date:"M d, Y h:i A" }}</div>
+                </div>
+              </div>
+              {% empty %}
+              <div style="text-align:center; color:#6b7c88; margin-top:60px;">No messages yet. Start the conversation below.</div>
+              {% endfor %}
+            </div>
+
+            <div class="chat-compose">
+              <div class="chat-compose-box">
+                <input id="chat-message-input" type="text" placeholder="Type a message to the police station">
+                <button type="button" id="chat-send-button">Send</button>
+              </div>
+            </div>
+            {% else %}
+            <div style="display:flex; align-items:center; justify-content:center; height:100%; padding:40px; text-align:center; color:#6b7c88;">
+              <div>
+                <h3 style="font-weight:700; color:#173945;">No chat selected</h3>
+                <p style="max-width:420px;">Your conversations with police stations will appear here once a complaint is assigned to a station.</p>
+              </div>
+            </div>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+{% if selected_room %}
+<script src="{% static 'ctapp/js/chat_room.js' %}"></script>
+<script>
+  initChatRoom({
+    apiUrl: "{% url 'chat_room_messages_api' selected_room.chat_room_id %}",
+    chatLogId: "chat-log",
+    inputId: "chat-message-input",
+    buttonId: "chat-send-button",
+    emptyMessage: "No messages yet. Start the conversation below.",
+    pollMs: 2500
+  });
+</script>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,84 @@
+{% extends "header.html" %}
+{% load static %}
+{% block extra_head %}
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="{% static 'ctapp/css/auth_modern.css' %}">
+<style>
+  body { font-family: "Manrope", sans-serif; }
+</style>
+{% endblock %}
+{% block content %}
+<section class="auth-shell">
+  <div class="container">
+    <div class="auth-grid">
+      <aside class="auth-panel">
+        <div class="auth-panel__body">
+          <div>
+            <div class="auth-badge">CrimeTracker Portal</div>
+            <h1>Secure access for citizens, police stations, and administrators.</h1>
+            <p>Sign in to file complaints, monitor investigation progress, coordinate with assigned stations, and manage public safety workflows from one place.</p>
+          </div>
+          <div class="auth-highlights">
+            <div class="auth-highlight">
+              <strong>Fast complaint handling</strong>
+              Reports, attachments, and mapped locations stay connected to the same case.
+            </div>
+            <div class="auth-highlight">
+              <strong>Role-based access</strong>
+              One login page supports citizen, station, police, and admin accounts.
+            </div>
+          </div>
+        </div>
+      </aside>
+
+      <section class="auth-card">
+        <div class="auth-card__body">
+          <div class="auth-topline">
+            <div>
+              <div class="auth-brand">CrimeTracker</div>
+              <div class="auth-kicker">Welcome Back</div>
+            </div>
+            <a class="auth-link" href="{% url 'user_registration' %}">Create citizen account</a>
+          </div>
+
+          <h2 class="auth-title">Sign in to your account</h2>
+          <p class="auth-subtitle">Use your registered username and password to continue to the correct dashboard.</p>
+
+          {% if messages %}
+          <div class="auth-message">
+            {% for message in messages %}
+            <div class="alert alert-success">{{ message }}</div>
+            {% endfor %}
+          </div>
+          {% endif %}
+
+          <form action="{% url 'login_action' %}" method="post" id="myform1" class="auth-form">
+            {% csrf_token %}
+            <div class="auth-form-grid">
+              <div class="auth-field auth-field--full">
+                <label for="username">Username</label>
+                <input type="text" class="auth-input" id="username" name="username" placeholder="Enter your username">
+              </div>
+              <div class="auth-field auth-field--full">
+                <label for="password">Password</label>
+                <input type="password" class="auth-input" id="password" name="password" placeholder="Enter your password">
+              </div>
+            </div>
+
+            <div class="auth-actions">
+              <a class="auth-link" href="/forget_password/">Forgot password?</a>
+              <button class="auth-btn" type="submit">Login</button>
+            </div>
+          </form>
+
+          <div class="auth-footer-note">
+            <strong>New here?</strong> Register as a <a class="auth-link" href="{% url 'user_registration' %}">citizen</a> or a <a class="auth-link" href="{% url 'police_registration' %}">police station</a>.
+          </div>
+        </div>
+      </section>
+    </div>
+  </div>
+</section>
+{% endblock %}

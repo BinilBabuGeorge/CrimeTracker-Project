@@ -1,0 +1,67 @@
+{% extends "Master/header.html" %}
+{% block content %}
+<div class="pagetitle">
+  <h1>Forward Panic Alert</h1>
+</div>
+
+<section class="section" style="min-height: 500px;">
+  <div class="row">
+    {% if messages %}
+      {% for message in messages %}
+        <div class="alert alert-warning">{{ message }}</div>
+      {% endfor %}
+    {% endif %}
+    <div class="col-lg-12">
+      <div class="card">
+        <div class="card-body">
+          <h5 class="card-title">Alert #{{ alert.panic_alert_id }}</h5>
+          <p><strong>Citizen:</strong> {{ alert.user.name }} ({{ alert.user.phone_number }})</p>
+          <p><strong>Location:</strong> {% if alert.latitude and alert.longitude %}{{ alert.latitude }}, {{ alert.longitude }}{% else %}<span class="text-muted">Location unavailable</span>{% endif %}</p>
+          <p><strong>Sent At:</strong> {{ alert.created_at|date:"M d, Y h:i A" }}</p>
+          {% if alert.latitude and alert.longitude %}
+            <a class="btn btn-outline-primary btn-sm" href="{% url 'adm_google_map_view_spot' alert.latitude alert.longitude %}">View on Map</a>
+          {% endif %}
+          <hr>
+
+          {% if nearest %}
+            <div class="alert alert-info">
+              Nearest station (based on saved station coordinates): <strong>{{ nearest.station_name }}</strong>
+              {% if nearest_km %} ({{ nearest_km|floatformat:2 }} km){% endif %}
+            </div>
+          {% elif not alert.latitude or not alert.longitude %}
+            <div class="alert alert-warning">
+              This alert was sent without location permission, so a nearest station cannot be calculated. Please choose a station manually.
+            </div>
+          {% else %}
+            <div class="alert alert-warning">
+              No station has coordinates saved yet, so “nearest” cannot be computed. Please select a station manually.
+            </div>
+          {% endif %}
+
+          <form method="post" action="{% url 'adm_forward_panic' alert.panic_alert_id %}">
+            {% csrf_token %}
+            <div class="row">
+              <div class="col-md-8 mb-3">
+                <label>Police Station</label>
+                <select name="police_station" class="form-control" {% if not nearest %}required{% endif %}>
+                  <option value="">--Select--</option>
+                  {% for s in stations %}
+                    <option value="{{ s.police_station_id }}" {% if nearest and s.police_station_id == nearest.police_station_id %}selected{% endif %}>
+                      {{ s.station_name }} - {{ s.place }}
+                    </option>
+                  {% endfor %}
+                </select>
+              </div>
+              <div class="col-md-4 mb-3 d-flex align-items-end">
+                <button class="btn btn-primary w-100" type="submit">Forward</button>
+              </div>
+            </div>
+            <a class="btn btn-secondary" href="{% url 'adm_panic_alerts' %}">Back</a>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}
+

@@ -1,0 +1,159 @@
+{% extends "header.html" %}
+{% load static %}
+{% block extra_head %}
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="{% static 'ctapp/css/auth_modern.css' %}">
+<style>
+  body { font-family: "Manrope", sans-serif; }
+</style>
+{% endblock %}
+{% block content %}
+<section class="auth-shell">
+  <div class="container">
+    <div class="auth-grid">
+      <aside class="auth-panel">
+        <div class="auth-panel__body">
+          <div>
+            <div class="auth-badge">Station Registration</div>
+            <h2>Register your police station with a more credible digital intake experience.</h2>
+            <p>Submit station details for approval so your team can receive routed complaints, assign officers, and manage investigations from a centralized workflow.</p>
+          </div>
+          <div class="auth-highlights">
+            <div class="auth-highlight">
+              <strong>Station-based routing</strong>
+              Cases can be directed to the right district and station faster.
+            </div>
+            <div class="auth-highlight">
+              <strong>Officer assignment</strong>
+              Approved stations can allocate cases to available personnel.
+            </div>
+            <div class="auth-highlight">
+              <strong>Approval workflow</strong>
+              Registrations remain pending until reviewed by the admin team.
+            </div>
+          </div>
+        </div>
+      </aside>
+
+      <section class="auth-card">
+        <div class="auth-card__body">
+          <div class="auth-topline">
+            <div>
+              <div class="auth-brand">CrimeTracker</div>
+              <div class="auth-kicker">Police Station Portal</div>
+            </div>
+            <a class="auth-link" href="{% url 'user_login' %}">Back to login</a>
+          </div>
+
+          <h2 class="auth-title">Register your station</h2>
+          <p class="auth-subtitle">Provide the station identity, location, and account credentials. After submission, the station remains pending until admin approval.</p>
+
+          {% if messages %}
+          <div class="auth-message">
+            {% for message in messages %}
+            <div class="alert alert-success">{{ message }}</div>
+            {% endfor %}
+          </div>
+          {% endif %}
+
+          <form action="{% url 'save_station' %}" method="post" id="stationForm" class="auth-form">
+            {% csrf_token %}
+            <div class="auth-form-grid">
+              <div class="auth-field">
+                <label for="station_name">Station Name</label>
+                <input type="text" id="station_name" name="station_name" class="auth-input" placeholder="Enter station name" required>
+              </div>
+              <div class="auth-field">
+                <label for="phone">Phone Number</label>
+                <input type="text" id="phone" name="phone" class="auth-input" placeholder="Official contact number" required>
+              </div>
+              <div class="auth-field">
+                <label for="state">State</label>
+                <select name="state" id="state" class="auth-select" required>
+                  <option value="">--Select State--</option>
+                  {% for k in data %}
+                  <option value="{{k.state_id}}">{{k.state}}</option>
+                  {% endfor %}
+                </select>
+              </div>
+              <div class="auth-field">
+                <label for="district">District</label>
+                <select name="district" id="district" class="auth-select" required>
+                  <option value="">--Select District--</option>
+                  {% for d in district %}
+                  <option value="{{d.district_id}}">{{d.district}}</option>
+                  {% endfor %}
+                </select>
+              </div>
+              <div class="auth-field">
+                <label for="place">Place</label>
+                <input type="text" id="place" name="place" class="auth-input" placeholder="Station locality" required>
+              </div>
+              <div class="auth-field">
+                <label for="mail_id">Official Email</label>
+                <input type="email" id="mail_id" name="mail_id" class="auth-input" placeholder="station@email.com" required>
+              </div>
+              <div class="auth-field auth-field--full">
+                <label for="address">Address</label>
+                <textarea id="address" name="address" class="auth-textarea" placeholder="Enter full station address" required></textarea>
+              </div>
+              <div class="auth-field">
+                <label for="username">Username</label>
+                <input type="text" id="username" name="username" class="auth-input" placeholder="Create station username" required>
+              </div>
+              <div class="auth-field">
+                <label for="password">Password</label>
+                <input type="password" id="password" name="password" class="auth-input" placeholder="Create password" required>
+              </div>
+              <div class="auth-field auth-field--full">
+                <label for="cpassword">Confirm Password</label>
+                <input type="password" id="cpassword" name="cpassword" class="auth-input" placeholder="Confirm password" required>
+                <span class="auth-helper">Use a strong password for the station account before submitting for approval.</span>
+              </div>
+            </div>
+
+            <div class="auth-actions">
+              <a class="auth-link" href="{% url 'user_login' %}">Use existing account</a>
+              <button type="submit" class="auth-btn">Register Station</button>
+            </div>
+          </form>
+
+          <div class="auth-footer-note">
+            <strong>Review status:</strong> After submission, the account is marked pending and becomes active after admin approval.
+          </div>
+        </div>
+      </section>
+    </div>
+  </div>
+</section>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+$("#state").change(function() {
+  var state = $(this).val();
+
+  $.ajax({
+    url: "{% url 'display_district' %}",
+    data: {
+      'state_id': state
+    },
+    success: function(data) {
+      var html = '<option value="">--Select District--</option>';
+      for (var i = 0; i < data.length; i++) {
+        html += '<option value="' + data[i].district_id + '">' + data[i].district + '</option>';
+      }
+      $("#district").html(html);
+    }
+  });
+});
+
+$("#stationForm").on("submit", function(event) {
+  if ($("#password").val() !== $("#cpassword").val()) {
+    event.preventDefault();
+    alert("Password and confirm password must match.");
+  }
+});
+</script>
+{% endblock %}

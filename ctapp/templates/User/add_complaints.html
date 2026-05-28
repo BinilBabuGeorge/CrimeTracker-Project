@@ -1,0 +1,243 @@
+{% extends "User/header.html" %}
+{% block content %}
+{% load static %}
+{% include "includes/leaflet_assets.html" %}
+<section class="contact_section layout_padding">
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-md-2"></div>
+      <div class="col-md-9">
+        <h1 class="text-center" style="color: rgb(14, 120, 128);">Crime Registration</h1>
+        {% if messages %}
+        <ul class="messages">
+          {% for message in messages %}
+          <div class="alert alert-success">{{message }}</div>
+          {% endfor %}
+        </ul>
+        {% endif %}
+        <form action="{% url 'submit_complaint' %}" method="post" enctype="multipart/form-data" id="myform">
+          {% csrf_token %}
+          <div class="row">
+            <div class="col-sm-6">
+              <div class="form-group">
+                <label for="">Your State</label>
+                <select name="state" id="state" class="form-control">
+                  <option value="">--Select--</option>
+                  {% for k in state %}
+                  <option value="{{k.state_id}}">{{k.state}}</option>
+                  {% endfor %}
+                </select>
+              </div>
+              <div class="form-group">
+                <label for="">Your District</label>
+                <select name="district" id="district" class="form-control">
+                  <option value="">--Select--</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label for="">Place of crime</label>
+                <input type="text" name="place" class="form-control" id="place">
+              </div>
+              <div class="mb-3">
+                <label for="subject" class="form-label">Complaint Subject</label>
+                <input type="text" id="subject" name="subject" class="form-control" placeholder="Enter the subject of your complaint" required>
+              </div>
+              <div class="mb-3">
+                <label for="complaintText" class="form-label">Complaint</label>
+                <textarea id="complaintText" name="complaintText" class="form-control" rows="5" placeholder="Enter your complaint here" required></textarea>
+              </div>
+              <div class="mb-3">
+                <label for="crimeDate" class="form-label">Date and time of Crime</label>
+                <input type="datetime-local" id="crimeDate" name="crimeDatetime" class="form-control" required max="{{ current_datetime|date:'Y-m-d\\TH:i' }}">
+              </div>
+              <div class="mb-3">
+                <label for="crimeType" class="form-label">Type of Crime</label>
+                <select id="crimeType" name="crimeType" class="form-control" required>
+                  <option value="">Select Crime Type</option>
+                  {% for crime in crime_types %}
+                  <option value="{{ crime.category_id }}">{{ crime.category }}</option>
+                  {% endfor %}
+                </select>
+              </div>
+              <div class="mb-3">
+                <label for="document" class="form-label">Upload Supporting Documents (Optional)</label>
+                <input type="file" id="document" name="document" class="form-control">
+              </div>
+            </div>
+            <div class="col-sm-6">
+              <div class="form-group">
+                <label for="">State</label>
+                <select name="state1" id="state1" class="form-control">
+                  <option value="">--Select--</option>
+                  {% for k in state %}
+                  <option value="{{k.state_id}}">{{k.state}}</option>
+                  {% endfor %}
+                </select>
+              </div>
+              <div class="form-group">
+                <label for="">District</label>
+                <select name="district1" id="district1" class="form-control">
+                  <option value="">--Select--</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label for="">Police Station</label>
+                <select name="police_station" id="police_station" class="form-control">
+                  <option value="">--Select--</option>
+                </select>
+              </div>
+              <div class="row mt-3">
+                <div class="col-md-6 mb-3">
+                  <label for="latitude" class="form-label">Latitude</label>
+                  <input type="text" id="latitude" class="form-control" name="latitude" placeholder="Selected from map" required readonly>
+                </div>
+                <div class="col-md-6 mb-3">
+                  <label for="longitude" class="form-label">Longitude</label>
+                  <input type="text" id="longitude" class="form-control" name="longitude" placeholder="Selected from map" required readonly>
+                </div>
+              </div>
+              <div class="mb-3">
+                <label class="form-label">Crime Location</label>
+                <div
+                  id="complaint-location-map"
+                  class="leaflet-complaint-map map-lg"
+                  data-mode="picker"
+                  data-lat-input="latitude"
+                  data-lng-input="longitude"
+                  data-status-id="map-selection-status"
+                  data-default-lat="20.5937"
+                  data-default-lng="78.9629"
+                ></div>
+                <div class="leaflet-map-note">Click on the map to choose the exact crime location.</div>
+                <div id="map-selection-status" class="leaflet-map-coordinates">No location selected yet.</div>
+              </div>
+            </div>
+            <div class="col-md-12 text-center">
+              <button type="submit" class="btn btn-primary">Submit Complaint</button>
+            </div>
+          </div>
+        </form>
+        <script src="{% static 'assets/Validation/jquery-1.11.1.min.js' %}"></script>
+        <script src="{% static 'assets/Validation/jquery_validate.js' %}"></script>
+        <script src="{% static 'assets/Validation/additional_validate.js' %}"></script>
+        <script>
+        $("#state,#state1").change(function () {
+          var state = $(this).val();
+          var targetDistrict = $(this).attr('id') === 'state' ? '#district' : '#district1';
+
+          $.ajax({
+            url: "{% url 'display_district' %}",
+            data: {
+              'state_id': state
+            },
+            dataType: 'json',
+            success: function (data) {
+              let html_data = '<option value="">--Select--</option>';
+              data.forEach(function (data) {
+                html_data += `<option value="${data.district_id}">${data.district}</option>`;
+              });
+              $(targetDistrict).html(html_data);
+            }
+          });
+        });
+
+        $("#district1").change(function () {
+          var district_id = $(this).val();
+
+          $.ajax({
+            url: "{% url 'display_police_station' %}",
+            data: {
+              'district_id': district_id
+            },
+            dataType: 'json',
+            success: function (data) {
+              let html_data = '<option value="">--Select--</option>';
+              data.forEach(function (data) {
+                html_data += `<option value="${data.police_station_id}">${data.place}</option>`;
+              });
+              $('#police_station').html(html_data);
+            }
+          });
+        });
+        </script>
+
+        <script>
+        (function ($, W, D) {
+          var JQUERY4U = {};
+          JQUERY4U.UTIL = {
+            setupFormValidation: function () {
+              $.validator.addMethod(
+                "regex",
+                function(value, element, regexp) {
+                  return this.optional(element) || regexp.test(value);
+                },
+                "Not a valid Input."
+              );
+
+              $("#myform").validate({
+                rules: {
+                  state: {
+                    required: true
+                  },
+                  district: {
+                    required: true
+                  },
+                  place: {
+                    required: true,
+                    regex: /^[a-zA-Z ]+$/,
+                    minlength: 3
+                  },
+                  subject: {
+                    required: true
+                  },
+                  complaintText: {
+                    required: true
+                  },
+                  crimeDatetime: {
+                    required: true
+                  },
+                  crimeType: {
+                    required: true
+                  },
+                  document: {
+                    extension: 'pdf|png|jpeg|jpg|mp4'
+                  },
+                  state1: {
+                    required: true
+                  },
+                  district1: {
+                    required: true
+                  },
+                  police_station: {
+                    required: true
+                  },
+                  latitude: {
+                    required: true
+                  },
+                  longitude: {
+                    required: true
+                  }
+                },
+                messages: {
+                  latitude: 'Select the crime location on the map.',
+                  longitude: 'Select the crime location on the map.',
+                  document: 'pdf|png|jpeg|jpg|mp4 Only'
+                },
+                submitHandler: function (form) {
+                  form.submit();
+                }
+              });
+            }
+          };
+
+          $(D).ready(function ($) {
+            JQUERY4U.UTIL.setupFormValidation();
+          });
+        })(jQuery, window, document);
+        </script>
+      </div>
+      <div class="col-md-6"></div>
+    </div>
+  </div>
+</section>
+{% endblock %}

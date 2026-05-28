@@ -1,0 +1,125 @@
+{% extends "Police/header.html" %}
+{% block content %}
+{% load static %}
+
+<div class="pagetitle">
+    <h1>Profile</h1>
+</div>
+
+<!-- Card at the Top -->
+<div class="col-lg-12">
+    <div class="row">
+        <div class="col-xxl-12 col-md-12">
+            <div class="card info-card sales-card">
+                <div class="card-body">
+                    <h5 class="card-title"></h5>
+                    <div class="d-flex align-items-center">
+                        
+                        </div>
+                        <div class="ps-3">
+                            
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- CSS Styling -->
+<style>
+    i {
+        color: rgb(42, 159, 136);
+        font-size: 30px;
+    }
+
+    .profile-card {
+        background: #85adc8;
+        padding: 30px;
+        border-radius: 15px;
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+        text-align: center;
+        max-width: 400px;
+        width: 100%;
+    }
+
+    .profile-card img {
+        width: 120px;
+        height: 120px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 4px solid #fff;
+    }
+
+    .profile-card h2 {
+        margin: 15px 0 5px;
+        font-size: 22px;
+        font-weight: bold;
+    }
+
+    .profile-card p {
+        font-size: 16px;
+        margin: 5px 0;
+        color: #090d12;
+    }
+
+    .badge {
+        background: #ffcc00;
+        color: #222;
+        padding: 5px 10px;
+        border-radius: 5px;
+        font-weight: bold;
+        display: inline-block;
+        margin-top: 8px;
+    }
+
+    .profile-info {
+        margin-top: 20px;
+        text-align: left;
+        padding: 10px;
+        border-top: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    .profile-info p {
+        text-align: center;
+        font-size: 18px;
+        margin: 8px 0;
+        color: #141a1f;
+    }
+
+    .profile-info strong {
+        color: #133b4c;
+    }
+</style>
+
+<!-- Profile Section -->
+<section class="section" style="min-height: 500px;">
+    <div class="row d-flex justify-content-center">
+        <div class="col-lg-12 d-flex justify-content-center">
+            <div class="profile-card">
+                {% if profile.photo %}
+                    <img src="{{ profile.photo }}" alt="Profile Photo">
+                {% else %}
+                    <img src="default_profile.png" alt="Default Profile Photo">
+                {% endif %}
+
+                <h2>{{ profile.name }}</h2>
+                <p class="badge">{{ profile.p_type }}</p>
+
+                <div class="profile-info">
+                    <p><strong>District:</strong> {{ profile.district.district }}</p>
+                    <p><strong>Place:</strong> {{ profile.place }}</p>
+                    <p><strong>Address:</strong> {{ profile.address }}</p>
+                    <p><strong>Phone:</strong> {{ profile.phone_number }}</p>
+                    <p><strong>Email:</strong> {{ profile.mail_id }}</p>
+                    <p><strong>Qualification:</strong> {{ profile.qualification }}</p>
+                    <p><strong>DOB:</strong> {{ profile.date_of_birth }}</p>
+                    <p><strong>Gender:</strong> {{ profile.gender }}</p>
+                    <p><strong>Police Station:</strong> {{ profile.police_station.place }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+{% endblock %}
