@@ -1,5 +1,9 @@
 # 🚨 CrimeTracker — Online Crime Reporting & Case Management System
 
+<img src="https://github.com/BinilBabuGeorge/CrimeTracker-Project/actions/workflows/ci.yml/badge.svg" alt="CI">
+<img src="https://github.com/BinilBabuGeorge/CrimeTracker-Project/actions/workflows/cd.yml/badge.svg" alt="CD">
+
+
 A full-stack, role-based web application that digitizes the crime reporting and investigation workflow — from a citizen filing a complaint to a police officer closing the case — with real-time chat, live panic alerts, and geolocation-based crime mapping.
 
 Built with **Python, Django, Django Channels (WebSockets), MySQL, and Leaflet.js**.
