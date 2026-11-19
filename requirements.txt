@@ -1,0 +1,6 @@
+Django>=5.0,<5.1
+channels
+daphne
+mysqlclient
+whitenoise
+Pillow
